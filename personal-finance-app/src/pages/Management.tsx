@@ -50,7 +50,7 @@ export const Management: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col gap-4 pt-4">
+        <div className="flex flex-col gap-4 p-4" style={{ paddingTop: 'calc(1rem + env(safe-area-inset-top))' }}>
             <header>
                 <h1 className="text-xl font-bold">Manage Movements</h1>
             </header>
@@ -63,7 +63,7 @@ export const Management: React.FC = () => {
                     placeholder="Search movements..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-full bg-slate-800 border border-slate-700 rounded-lg py-3 pl-10 pr-4 text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors"
+                    className="w-full bg-slate-800/50 backdrop-blur-sm border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
                 />
             </div>
 

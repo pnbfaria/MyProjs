@@ -47,7 +47,7 @@ export const Dashboard: React.FC = () => {
             </header>
 
             {/* Balance Card */}
-            <div className="card w-full" style={{ background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-secondary) 100%)' }}>
+            <div className="card w-full" style={{ background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%)', border: '1px solid rgba(255,255,255,0.05)' }}>
                 <div className="flex flex-col gap-4 p-4">
                     <div className="flex justify-between items-start">
                         <div>
@@ -77,7 +77,12 @@ export const Dashboard: React.FC = () => {
             {/* Recent Activity Header */}
             <div className="flex justify-between w-full items-center">
                 <h3 className="text-lg font-bold">Recent Activity</h3>
-                <button className="text-sm text-accent-primary font-medium">See All</button>
+                <button
+                    className="text-xs font-semibold bg-indigo-500/10 text-indigo-400 px-3 py-1.5 rounded-full border border-indigo-500/20 hover:bg-indigo-500/20 transition-all"
+                    onClick={() => navigate('/movements')}
+                >
+                    View All
+                </button>
             </div>
 
             {/* Movements List */}
@@ -90,8 +95,8 @@ export const Dashboard: React.FC = () => {
                     recentMovements.map((movement) => (
                         <div key={movement.id} className="card flex items-center justify-between p-3">
                             <div className="flex items-center gap-3">
-                                <div className={`p-2 rounded-full ${movement.type?.code === 'income' ? 'bg-emerald-500/10' : 'bg-rose-500/10'}`}>
-                                    {movement.type?.code === 'income' ? (
+                                <div className={`p-2 rounded-full ${movement.type?.code?.toLowerCase() === 'income' ? 'bg-emerald-500/10' : 'bg-rose-500/10'}`}>
+                                    {movement.type?.code?.toLowerCase() === 'income' ? (
                                         <TrendingUp size={18} className="text-emerald-500" />
                                     ) : (
                                         <TrendingDown size={18} className="text-rose-500" />
@@ -104,18 +109,20 @@ export const Dashboard: React.FC = () => {
                                     </p>
                                 </div>
                             </div>
-                            <span className={`font-bold ${movement.type?.code === 'income' ? 'text-emerald-500' : 'text-white'}`}>
-                                {movement.type?.code === 'income' ? '+' : '-'}{formatCurrency(movement.amount)}
+                            <span className={`font-bold ${movement.type?.code?.toLowerCase() === 'income' ? 'text-emerald-500' : 'text-white'}`}>
+                                {movement.type?.code?.toLowerCase() === 'income' ? '+' : '-'}{formatCurrency(movement.amount)}
                             </span>
                         </div>
                     ))
                 )}
+                {/* Spacer to prevent overlapping with FAB and Bottom Nav */}
+                <div style={{ height: 'calc(6rem + env(safe-area-inset-bottom))' }} />
             </div>
 
             {/* FAB */}
             <button
-                className="btn btn-primary fixed bottom-20 right-4 shadow-lg flex items-center gap-2"
-                style={{ zIndex: 40 }}
+                className="btn btn-primary fixed right-4 shadow-lg flex items-center gap-2"
+                style={{ zIndex: 40, bottom: 'calc(5rem + env(safe-area-inset-bottom))' }}
                 onClick={() => navigate('/add-movement')}
             >
                 <Plus size={20} />

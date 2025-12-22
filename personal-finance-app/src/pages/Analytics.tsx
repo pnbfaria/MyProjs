@@ -32,7 +32,7 @@ export const Analytics: React.FC = () => {
     };
 
     const getExpensesByCategory = () => {
-        const expenses = movements.filter(m => m.type?.code === 'expense');
+        const expenses = movements.filter(m => m.type?.code?.toLowerCase() === 'expense');
         const byCategory: Record<string, number> = {};
 
         expenses.forEach(m => {
@@ -51,21 +51,23 @@ export const Analytics: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col gap-4 pt-4">
+        <div className="flex flex-col gap-4 p-4" style={{ paddingTop: 'calc(1rem + env(safe-area-inset-top))' }}>
             <header>
                 <h1 className="text-xl font-bold">Analytics</h1>
             </header>
 
             {/* Filter Tabs */}
-            <div className="flex bg-slate-800 p-1 rounded-lg">
+            <div className="flex bg-slate-900/40 p-1 rounded-xl border border-white/5 backdrop-blur-sm">
                 {(['week', 'month', 'year'] as const).map((f) => (
                     <button
                         key={f}
                         onClick={() => setFilter(f)}
-                        className={`flex-1 py-1 px-3 rounded-md text-sm font-medium transition-colors ${filter === f ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+                        className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-300 ${filter === f
+                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20 transform scale-[1.02]'
+                                : 'text-slate-400 hover:text-white hover:bg-white/5'
                             }`}
                     >
-                        {f.charAt(0).toUpperCase() + f.slice(1)}
+                        {f}
                     </button>
                 ))}
             </div>
