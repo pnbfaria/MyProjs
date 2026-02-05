@@ -1,0 +1,100 @@
+.card {
+    background: var(--color-bg-secondary);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    transition: width var(--transition-base);
+}
+
+.card.success::before {
+    background: var(--color-success);
+}
+
+.card.warning::before {
+    background: var(--color-warning);
+}
+
+.card.danger::before {
+    background: var(--color-danger);
+}
+
+.card.primary::before {
+    background: var(--color-primary);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card:hover::before {
+    width: 8px;
+}
+
+.icon {
+    font-size: 2rem;
+    margin-bottom: var(--space-sm);
+}
+
+.title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--space-md);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+}
+
+.status,
+.justification {
+    margin-bottom: var(--space-sm);
+}
+
+.label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    margin-bottom: 4px;
+}
+
+.value {
+    display: block;
+    font-size: 0.9375rem;
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.status .value {
+    font-weight: 700;
+}
+
+.card.success .status .value {
+    color: var(--color-success);
+}
+
+.card.warning .status .value {
+    color: hsl(45, 93%, 35%);
+}
+
+.card.danger .status .value {
+    color: var(--color-danger);
+}
+
+.card.primary .status .value {
+    color: var(--color-primary);
+}
