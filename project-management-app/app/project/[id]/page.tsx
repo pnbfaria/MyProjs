@@ -7,8 +7,8 @@ import { supabase } from '@/lib/supabase'
 import { useUser } from '@/context/UserContext'
 import { Project, AppUser, Risk, Deliverable, Achievement, TimeSheet, RagStatus, Role } from '@/types/database'
 import StatusCard from '@/components/StatusCard'
+import GlobalStatusCard from '@/components/GlobalStatusCard'
 import ResourceConsumption from '@/components/ResourceConsumption'
-import ProgressCircle from '@/components/ProgressCircle'
 import TabNavigation from '@/components/TabNavigation'
 import Modal from '@/components/Modal'
 import styles from './page.module.css'
@@ -437,15 +437,14 @@ export default function ProjectDetail() {
             </div>
 
             <div className={styles.statusGrid}>
-                <StatusCard
-                    title="Global Status"
+                <GlobalStatusCard
                     status={(() => {
                         const statuses = [getTimingStatus().status, getBudgetStatus().status, getScopeStatus().status]
                         if (statuses.some(s => s.toLowerCase() === 'red')) return 'Red'
                         if (statuses.some(s => s.toLowerCase() === 'amber')) return 'Amber'
                         return 'Green'
                     })()}
-                    type="global"
+                    percentage={calculateProgress()}
                 />
                 <StatusCard
                     title="Timing Status"
@@ -464,10 +463,6 @@ export default function ProjectDetail() {
                     status={getScopeStatus().status}
                     justification={getScopeStatus().justification}
                     type="scope"
-                />
-                <ProgressCircle
-                    percentage={calculateProgress()}
-                    label="Completed"
                 />
             </div>
 
