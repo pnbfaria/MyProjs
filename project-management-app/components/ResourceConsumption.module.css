@@ -1,0 +1,128 @@
+.container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #1a202c;
+}
+
+.controls {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.toggle {
+    display: flex;
+    background: #f7fafc;
+    border-radius: 6px;
+    padding: 2px;
+}
+
+.toggleBtn {
+    border: none;
+    background: transparent;
+    padding: 6px 16px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    color: #718096;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.toggleBtn.active {
+    background: white;
+    color: #2d3748;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-weight: 500;
+}
+
+.datePicker {
+    display: flex;
+    gap: 8px;
+}
+
+.datePicker select {
+    padding: 6px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: white;
+    color: #4a5568;
+    font-size: 0.875rem;
+}
+
+.chartsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.chartCard {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #edf2f7;
+}
+
+.chartCard h4 {
+    margin: 0 0 16px 0;
+    font-size: 1rem;
+    color: #4a5568;
+    text-align: center;
+}
+
+.tableSection {
+    margin-top: 24px;
+}
+
+.tableHeader {
+    margin-bottom: 16px;
+}
+
+.tableHeader h4 {
+    margin: 0;
+    color: #2d3748;
+}
+
+.userInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.userName {
+    font-weight: 500;
+    color: #2d3748;
+}
+
+.userEmail {
+    font-size: 0.75rem;
+    color: #718096;
+}
+
+.inputSm {
+    width: 80px;
+    padding: 4px 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+}
+
+.actionButtons {
+    display: flex;
+    gap: 4px;
+}

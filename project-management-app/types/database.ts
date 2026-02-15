@@ -52,7 +52,10 @@ export interface TimeSheet {
     brandeddevyearscount: number
     totalmancount?: number
     totalsubtractvalue?: number
-    createdat: string
+    createdat?: string
+    estworkload?: number
+    useremail?: string
+    roleid?: number
 }
 
 export interface Risk {
@@ -97,7 +100,7 @@ export interface Registration {
 
 export interface Role {
     roleid: number
-    rank: string
+    name: string
     description: string
     defaulthourlyrate?: number
 }

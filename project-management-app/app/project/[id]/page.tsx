@@ -5,9 +5,9 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { useUser } from '@/context/UserContext'
-import { Project, AppUser, Risk, Deliverable, Achievement, TimeSheet, RagStatus } from '@/types/database'
+import { Project, AppUser, Risk, Deliverable, Achievement, TimeSheet, RagStatus, Role } from '@/types/database'
 import StatusCard from '@/components/StatusCard'
-import FinancialSnapshot from '@/components/FinancialSnapshot'
+import ResourceConsumption from '@/components/ResourceConsumption'
 import ProgressCircle from '@/components/ProgressCircle'
 import TabNavigation from '@/components/TabNavigation'
 import Modal from '@/components/Modal'
@@ -22,7 +22,7 @@ interface ProjectWithManagers extends Project {
 export default function ProjectDetail() {
     const params = useParams()
     const projectId = params?.id as string
-    const { currentUser } = useUser()
+    const { currentUser, allUsers } = useUser()
 
     const [project, setProject] = useState<ProjectWithManagers | null>(null)
     const [risks, setRisks] = useState<Risk[]>([])
@@ -31,11 +31,14 @@ export default function ProjectDetail() {
 
     const [timeSheets, setTimeSheets] = useState<TimeSheet[]>([])
     const [ragStatuses, setRagStatuses] = useState<RagStatus[]>([])
+    const [roles, setRoles] = useState<Role[]>([])
     const [loading, setLoading] = useState(true)
     const [activeTab, setActiveTab] = useState('overview')
 
     const [activeModal, setActiveModal] = useState<string>('none')
     const [formData, setFormData] = useState<any>({})
+    const [selectedMonths, setSelectedMonths] = useState<number[]>([])
+    const [userToManage, setUserToManage] = useState<string | null>(null)
 
     useEffect(() => {
         if (projectId) {
@@ -82,12 +85,14 @@ export default function ProjectDetail() {
             })
 
             // Fetch related data
-            const [risksRes, deliverablesRes, achievementsRes, timeSheetsRes, ragStatusesRes] = await Promise.all([
+            const [risksRes, deliverablesRes, achievementsRes, timeSheetsRes, ragStatusesRes, rolesRes] = await Promise.all([
                 supabase.from('risk').select('*').eq('projectid', projectId),
                 supabase.from('deliverable').select('*').eq('projectid', projectId),
                 supabase.from('achievement').select('*').eq('projectid', projectId),
                 supabase.from('timesheet').select('*').eq('projectid', projectId),
+
                 supabase.from('ragstatus').select('*').eq('projectid', projectId).order('createdon', { ascending: false }),
+                supabase.from('role').select('*'),
             ])
 
             setRisks(risksRes.data || [])
@@ -95,6 +100,7 @@ export default function ProjectDetail() {
             setAchievements(achievementsRes.data || [])
             setTimeSheets(timeSheetsRes.data || [])
             setRagStatuses(ragStatusesRes.data || [])
+            setRoles(rolesRes.data || [])
         } catch (error) {
             console.error('Error fetching project details:', error)
         } finally {
@@ -137,6 +143,13 @@ export default function ProjectDetail() {
                 scopestatus: data.scope,
                 scopejustification: data.justificationscope,
             })
+        } else if (modalName === 'addTimesheet') {
+            setSelectedMonths([])
+            if (data?.useremail) {
+                setFormData({ useremail: data.useremail }) // Pre-fill user if coming from manage
+            }
+        } else if (modalName === 'manageUserTimesheets' && data) {
+            setUserToManage(data)
         }
         setActiveModal(modalName)
     }
@@ -166,6 +179,49 @@ export default function ProjectDetail() {
         } catch (error) {
             console.error('Error deleting status:', error)
             alert('Failed to delete status. Please try again.')
+        }
+    }
+
+    const handleMonthToggle = (month: number) => {
+        setSelectedMonths(prev => {
+            if (prev.includes(month)) {
+                return prev.filter(m => m !== month)
+            } else {
+                return [...prev, month].sort((a, b) => a - b)
+            }
+        })
+    }
+
+    const handleTimesheetDelete = async (timesheetId: number) => {
+        if (!confirm('Are you sure you want to delete this timesheet entry?')) return
+
+        try {
+            const { error } = await supabase
+                .from('timesheet')
+                .delete()
+                .eq('timesheetid', timesheetId)
+
+            if (error) throw error
+
+            await fetchProjectDetails()
+        } catch (error) {
+            console.error('Error deleting timesheet:', error)
+            alert('Failed to delete timesheet. Please try again.')
+        }
+    }
+
+    const handleTimesheetUpdate = async (timesheetId: number, field: string, value: any) => {
+        try {
+            const { error } = await supabase
+                .from('timesheet')
+                .update({ [field]: value })
+                .eq('timesheetid', timesheetId)
+
+            if (error) throw error
+            await fetchProjectDetails()
+        } catch (error) {
+            console.error('Error updating timesheet:', error)
+            // ideally revert UI or show error
         }
     }
 
@@ -257,13 +313,26 @@ export default function ProjectDetail() {
                     }])
                 error = err
             } else if (activeModal === 'addTimesheet') {
+                if (selectedMonths.length === 0) {
+                    alert('Please select at least one month')
+                    return
+                }
+
+                const inserts = selectedMonths.map(month => ({
+                    ...formData,
+                    projectid: projectId,
+
+                    useremail: formData.useremail,
+                    workload: formData.workload || 0,
+                    estworkload: formData.estworkload || 0,
+                    roleid: formData.roleid,
+                    month: month,
+                    year: formData.year
+                }))
+
                 const { error: err } = await supabase
                     .from('timesheet')
-                    .insert([{
-                        ...formData,
-                        projectid: projectId,
-                        createdat: new Date().toISOString(),
-                    }])
+                    .insert(inserts)
                 error = err
             }
 
@@ -369,6 +438,16 @@ export default function ProjectDetail() {
 
             <div className={styles.statusGrid}>
                 <StatusCard
+                    title="Global Status"
+                    status={(() => {
+                        const statuses = [getTimingStatus().status, getBudgetStatus().status, getScopeStatus().status]
+                        if (statuses.some(s => s.toLowerCase() === 'red')) return 'Red'
+                        if (statuses.some(s => s.toLowerCase() === 'amber')) return 'Amber'
+                        return 'Green'
+                    })()}
+                    type="global"
+                />
+                <StatusCard
                     title="Timing Status"
                     status={getTimingStatus().status}
                     justification={getTimingStatus().justification}
@@ -392,9 +471,10 @@ export default function ProjectDetail() {
                 />
             </div>
 
-            <FinancialSnapshot
-                totalBudget={project.totalbudget || 0}
-                percentCompleted={project.percentcompleted || 0}
+            <ResourceConsumption
+                projectId={parseInt(projectId)}
+                initialTimeSheets={timeSheets}
+                onDataUpdate={fetchProjectDetails}
             />
 
             <TabNavigation
@@ -569,7 +649,7 @@ export default function ProjectDetail() {
                 {activeTab === 'timesheets' && (
                     <div className={styles.tableContainer}>
                         <div className={styles.tableHeader}>
-                            <h3>TimeSheets ({timeSheets.length})</h3>
+                            <h3>Resource Plan</h3>
                             <button className="btn btn-primary btn-sm" onClick={() => openModal('addTimesheet')}>+ Add TimeSheet</button>
                         </div>
                         {timeSheets.length === 0 ? (
@@ -578,19 +658,43 @@ export default function ProjectDetail() {
                             <table className="table">
                                 <thead>
                                     <tr>
-                                        <th>Month/Year</th>
-                                        <th>Workload</th>
-                                        <th>External Devs</th>
-                                        <th>Branded Dev Years</th>
+                                        <th>User</th>
+                                        <th>Role</th>
+                                        <th>Est Workload (Days)</th>
+                                        <th>Actual Workload (Days)</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {timeSheets.map((ts) => (
-                                        <tr key={ts.timesheetid}>
-                                            <td>{ts.month}/{ts.year}</td>
-                                            <td>{ts.workload}</td>
-                                            <td>{ts.externaldevcount}</td>
-                                            <td>{ts.brandeddevyearscount}</td>
+                                    {Object.values(timeSheets.reduce((acc: any, curr) => {
+                                        const email = curr.useremail || 'Unknown';
+                                        if (!acc[email]) {
+                                            const user = allUsers.find(u => u.email === email);
+                                            const role = roles.find(r => r.roleid === curr.roleid);
+                                            acc[email] = {
+                                                email,
+                                                name: user ? `${user.firstname} ${user.lastname}` : email,
+                                                role: role ? role.name : 'Unknown', // Use name as corrected previously
+                                                roleid: curr.roleid, // Keep for potential future use or if role changes (showing first found)
+                                                workload: 0,
+                                                estworkload: 0
+                                            };
+                                        }
+                                        acc[email].workload += (curr.workload || 0);
+                                        acc[email].estworkload += (curr.estworkload || 0);
+                                        return acc;
+                                    }, {})).map((row: any) => (
+                                        <tr key={row.email}>
+                                            <td>
+                                                <div style={{ fontWeight: 500 }}>{row.name}</div>
+                                                <div style={{ fontSize: '0.8em', color: '#666' }}>{row.email}</div>
+                                            </td>
+                                            <td><span className="badge badge-secondary">{row.role}</span></td>
+                                            <td>{row.estworkload}</td>
+                                            <td>{row.workload}</td>
+                                            <td>
+                                                <button className="btn btn-sm btn-outline-primary" onClick={() => openModal('manageUserTimesheets', row.email)}>✏️ Edit Details</button>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -943,16 +1047,61 @@ export default function ProjectDetail() {
             >
                 <form onSubmit={handleSubmit}>
                     <div className={modalStyles.formGroup}>
-                        <label className={modalStyles.label}>Month (1-12)</label>
-                        <input
-                            type="number"
-                            name="month"
-                            min="1"
-                            max="12"
+                        <label className={modalStyles.label}>User</label>
+                        <select
+                            name="useremail"
                             onChange={handleInputChange}
-                            className={modalStyles.input}
+                            className={modalStyles.select}
                             required
-                        />
+                            defaultValue=""
+                        >
+                            <option value="" disabled>Select User</option>
+                            {allUsers.map(user => (
+                                <option key={user.email} value={user.email}>
+                                    {user.firstname} {user.lastname} ({user.email})
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Role</label>
+                        <select
+                            name="roleid"
+                            onChange={handleInputChange}
+                            className={modalStyles.select}
+                            required
+                            defaultValue=""
+                        >
+                            <option value="" disabled>Select Role</option>
+                            {roles.map(role => (
+                                <option key={role.roleid} value={role.roleid}>
+                                    {role.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Months</label>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                            {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                                <button
+                                    key={m}
+                                    type="button"
+                                    onClick={() => handleMonthToggle(m)}
+                                    className={`btn ${selectedMonths.includes(m) ? 'btn-primary' : 'btn-secondary'}`}
+                                    style={{
+                                        width: '40px',
+                                        opacity: selectedMonths.includes(m) ? 1 : 0.6
+                                    }}
+                                >
+                                    {m}
+                                </button>
+                            ))}
+                        </div>
+                        {selectedMonths.length === 0 && <small style={{ color: 'red' }}>Please select at least one month</small>}
                     </div>
                     <div className={modalStyles.formGroup}>
                         <label className={modalStyles.label}>Year</label>
@@ -966,38 +1115,113 @@ export default function ProjectDetail() {
                         />
                     </div>
                     <div className={modalStyles.formGroup}>
-                        <label className={modalStyles.label}>Workload</label>
+                        <label className={modalStyles.label}>Actual Workload (Days)</label>
                         <input
                             type="number"
                             name="workload"
+                            step="0.1"
                             onChange={handleInputChange}
                             className={modalStyles.input}
                             required
                         />
                     </div>
                     <div className={modalStyles.formGroup}>
-                        <label className={modalStyles.label}>External Devs Count</label>
+                        <label className={modalStyles.label}>Estimated Workload (Days)</label>
                         <input
                             type="number"
-                            name="externaldevcount"
+                            name="estworkload"
+                            step="0.1"
                             onChange={handleInputChange}
                             className={modalStyles.input}
                         />
                     </div>
-                    <div className={modalStyles.formGroup}>
-                        <label className={modalStyles.label}>Branded Dev Years</label>
-                        <input
-                            type="number"
-                            name="brandeddevyearscount"
-                            onChange={handleInputChange}
-                            className={modalStyles.input}
-                        />
-                    </div>
+
                     <div className={modalStyles.actions}>
                         <button type="button" className="btn btn-secondary" onClick={closeModal}>Cancel</button>
                         <button type="submit" className="btn btn-primary">Add TimeSheet</button>
                     </div>
                 </form>
+            </Modal>
+
+            {/* Manage User Timesheets Modal */}
+            <Modal
+                isOpen={activeModal === 'manageUserTimesheets'}
+                onClose={closeModal}
+                title={`Manage Timesheets for ${allUsers.find(u => u.email === userToManage)?.firstname || userToManage}`}
+            >
+                <div style={{ marginBottom: '15px', display: 'flex', justifyContent: 'flex-end' }}>
+                    <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => {
+                            closeModal();
+                            openModal('addTimesheet', { useremail: userToManage });
+                        }}
+                    >
+                        + Add New Entry
+                    </button>
+                </div>
+                <div style={{ overflowX: 'auto' }}>
+                    <table className="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Period</th>
+                                <th>Role</th>
+                                <th>Est (Days)</th>
+                                <th>Actual (Days)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {timeSheets.filter(ts => ts.useremail === userToManage).sort((a, b) => {
+                                if (a.year !== b.year) return a.year - b.year;
+                                return a.month - b.month;
+                            }).map(ts => {
+                                const role = roles.find(r => r.roleid === ts.roleid);
+                                return (
+                                    <tr key={ts.timesheetid}>
+                                        <td>{ts.month}/{ts.year}</td>
+                                        <td>{role ? role.name : 'Unknown'}</td>
+                                        <td>
+                                            <input
+                                                type="number"
+                                                step="0.1"
+                                                defaultValue={ts.estworkload || 0}
+                                                onBlur={(e) => handleTimesheetUpdate(ts.timesheetid, 'estworkload', parseFloat(e.target.value))}
+                                                className={modalStyles.input}
+                                                style={{ width: '60px', padding: '2px' }}
+                                            />
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="number"
+                                                step="0.1"
+                                                defaultValue={ts.workload || 0}
+                                                onBlur={(e) => handleTimesheetUpdate(ts.timesheetid, 'workload', parseFloat(e.target.value))}
+                                                className={modalStyles.input}
+                                                style={{ width: '60px', padding: '2px' }}
+                                            />
+                                        </td>
+                                        <td>
+                                            <button
+                                                className="btn btn-sm btn-outline-danger"
+                                                onClick={() => handleTimesheetDelete(ts.timesheetid)}
+                                                title="Delete Entry"
+                                            >
+                                                🗑️
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                    {timeSheets.filter(ts => ts.useremail === userToManage).length === 0 && (
+                        <p style={{ textAlign: 'center', color: '#666' }}>No entries found for this user.</p>
+                    )}
+                </div>
+                <div className={modalStyles.actions}>
+                    <button type="button" className="btn btn-secondary" onClick={closeModal}>Close</button>
+                </div>
             </Modal>
         </div >
     )

@@ -3,19 +3,20 @@ import styles from './StatusCard.module.css'
 interface StatusCardProps {
     title: string
     status: string
-    justification: string
-    type: 'timing' | 'budget' | 'scope'
+    justification?: string
+    type: 'timing' | 'budget' | 'scope' | 'global'
 }
 
 export default function StatusCard({ title, status, justification, type }: StatusCardProps) {
     const getIcon = () => {
         if (type === 'timing') return '⏱️'
         if (type === 'budget') return '💰'
+        if (type === 'global') return '🌎'
         return '✅'
     }
 
     const getStatusClass = () => {
-        const s = status.toLowerCase()
+        const s = status?.toLowerCase() || 'gray'
         if (s === 'green' || s.includes('track') || s.includes('good')) return 'success'
         if (s === 'amber' || s.includes('risk') || s.includes('delayed')) return 'warning'
         if (s === 'red' || s.includes('over') || s.includes('critical')) return 'danger'
@@ -30,10 +31,12 @@ export default function StatusCard({ title, status, justification, type }: Statu
                 <span className={styles.label}>Status:</span>
                 <span className={styles.value}>{status}</span>
             </div>
-            <div className={styles.justification}>
-                <span className={styles.label}>Justification:</span>
-                <span className={styles.value}>{justification}</span>
-            </div>
+            {justification && (
+                <div className={styles.justification}>
+                    <span className={styles.label}>Justification:</span>
+                    <span className={styles.value}>{justification}</span>
+                </div>
+            )}
         </div>
     )
 }
