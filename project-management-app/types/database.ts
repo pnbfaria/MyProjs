@@ -2,8 +2,6 @@ export interface AppUser {
     email: string
     firstname: string
     lastname: string
-    jobtitle?: string
-    phonenumber?: string
     isactive?: boolean
     joinedat: string
 }
@@ -25,6 +23,23 @@ export interface Project {
     createdon: string
     updatedbyemail?: string
     updatedon?: string
+    clientid?: number
+    client?: Client // Optional relation
+    timingstatus?: string
+    timingjustification?: string
+    budgetstatus?: string
+    budgetjustification?: string
+    scopestatus?: string
+    scopejustification?: string
+}
+
+export interface Client {
+    id: number
+    name: string
+    description?: string
+    created_at?: string
+    created_by?: string
+    projects?: Project[]
 }
 
 export interface TimeSheet {
@@ -95,7 +110,20 @@ export interface Note {
 }
 
 export interface PriceType {
-    pricingypeid: number
+    pricingtypeid: number
     name: string
     description: string
+}
+
+export interface RagStatus {
+    ragid: number
+    projectid: number
+    timing: string
+    budget: string
+    scope: string
+    justificationtiming: string
+    justificationbudget: string
+    justificationscope: string
+    createdbyemail: string
+    createdon: string
 }

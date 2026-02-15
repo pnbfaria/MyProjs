@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import { Project, AppUser, Risk, Deliverable, Achievement, TimeSheet } from '@/types/database'
+import { useUser } from '@/context/UserContext'
+import { Project, AppUser, Risk, Deliverable, Achievement, TimeSheet, RagStatus } from '@/types/database'
 import StatusCard from '@/components/StatusCard'
 import FinancialSnapshot from '@/components/FinancialSnapshot'
 import ProgressCircle from '@/components/ProgressCircle'
@@ -21,12 +22,15 @@ interface ProjectWithManagers extends Project {
 export default function ProjectDetail() {
     const params = useParams()
     const projectId = params?.id as string
+    const { currentUser } = useUser()
 
     const [project, setProject] = useState<ProjectWithManagers | null>(null)
     const [risks, setRisks] = useState<Risk[]>([])
     const [deliverables, setDeliverables] = useState<Deliverable[]>([])
     const [achievements, setAchievements] = useState<Achievement[]>([])
+
     const [timeSheets, setTimeSheets] = useState<TimeSheet[]>([])
+    const [ragStatuses, setRagStatuses] = useState<RagStatus[]>([])
     const [loading, setLoading] = useState(true)
     const [activeTab, setActiveTab] = useState('overview')
 
@@ -78,17 +82,19 @@ export default function ProjectDetail() {
             })
 
             // Fetch related data
-            const [risksRes, deliverablesRes, achievementsRes, timeSheetsRes] = await Promise.all([
+            const [risksRes, deliverablesRes, achievementsRes, timeSheetsRes, ragStatusesRes] = await Promise.all([
                 supabase.from('risk').select('*').eq('projectid', projectId),
                 supabase.from('deliverable').select('*').eq('projectid', projectId),
                 supabase.from('achievement').select('*').eq('projectid', projectId),
                 supabase.from('timesheet').select('*').eq('projectid', projectId),
+                supabase.from('ragstatus').select('*').eq('projectid', projectId).order('createdon', { ascending: false }),
             ])
 
             setRisks(risksRes.data || [])
             setDeliverables(deliverablesRes.data || [])
             setAchievements(achievementsRes.data || [])
             setTimeSheets(timeSheetsRes.data || [])
+            setRagStatuses(ragStatusesRes.data || [])
         } catch (error) {
             console.error('Error fetching project details:', error)
         } finally {
@@ -96,7 +102,7 @@ export default function ProjectDetail() {
         }
     }
 
-    const openModal = (modalName: string) => {
+    const openModal = (modalName: string, data?: any) => {
         setFormData({})
         if (modalName === 'editProject' && project) {
             setFormData({
@@ -106,6 +112,30 @@ export default function ProjectDetail() {
                 percentcompleted: project.percentcompleted,
                 startdate: project.startdate,
                 enddate: project.enddate,
+            })
+        } else if (modalName === 'updateStatus' && project) {
+            // Get latest status from ragStatuses state (first element since we sort desc)
+            const latestStatus = ragStatuses.length > 0 ? ragStatuses[0] : null
+
+            setFormData({
+                percentcompleted: project.percentcompleted || 0,
+                timingstatus: latestStatus?.timing || 'Green',
+                timingjustification: latestStatus?.justificationtiming || '',
+                budgetstatus: latestStatus?.budget || 'Green',
+                budgetjustification: latestStatus?.justificationbudget || '',
+                scopestatus: latestStatus?.scope || 'Green',
+                scopejustification: latestStatus?.justificationscope || '',
+            })
+        } else if (modalName === 'editRagStatus' && data) {
+            setFormData({
+                ragid: data.ragid,
+                percentcompleted: project?.percentcompleted || 0, // Keep current project progress
+                timingstatus: data.timing,
+                timingjustification: data.justificationtiming,
+                budgetstatus: data.budget,
+                budgetjustification: data.justificationbudget,
+                scopestatus: data.scope,
+                scopejustification: data.justificationscope,
             })
         }
         setActiveModal(modalName)
@@ -121,8 +151,32 @@ export default function ProjectDetail() {
         setFormData((prev: any) => ({ ...prev, [name]: value }))
     }
 
+    const handleRagStatusDelete = async (ragId: number) => {
+        if (!confirm('Are you sure you want to delete this status entry?')) return
+
+        try {
+            const { error } = await supabase
+                .from('ragstatus')
+                .delete()
+                .eq('ragid', ragId)
+
+            if (error) throw error
+
+            await fetchProjectDetails()
+        } catch (error) {
+            console.error('Error deleting status:', error)
+            alert('Failed to delete status. Please try again.')
+        }
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+
+        if (!currentUser) {
+            alert('Please select a user from the navigation bar first.')
+            return
+        }
+
         try {
             let error = null
 
@@ -132,6 +186,47 @@ export default function ProjectDetail() {
                     .update(formData)
                     .eq('projectid', projectId)
                 error = err
+            } else if (activeModal === 'updateStatus') {
+                // 1. Update project percentcompleted
+                const { error: projErr } = await supabase
+                    .from('project')
+                    .update({
+                        percentcompleted: formData.percentcompleted
+                    })
+                    .eq('projectid', projectId)
+
+                if (projErr) throw projErr
+
+                // 2. Insert new ragstatus record
+                const { error: ragErr } = await supabase
+                    .from('ragstatus')
+                    .insert([{
+                        projectid: projectId,
+                        timing: formData.timingstatus,
+                        budget: formData.budgetstatus,
+                        scope: formData.scopestatus,
+                        justificationtiming: formData.timingjustification,
+                        justificationbudget: formData.budgetjustification,
+                        justificationscope: formData.scopejustification,
+                        createdbyemail: currentUser.email,
+                        createdon: new Date().toISOString()
+                    }])
+
+                error = ragErr
+            } else if (activeModal === 'editRagStatus') {
+                const { error: ragErr } = await supabase
+                    .from('ragstatus')
+                    .update({
+                        timing: formData.timingstatus,
+                        budget: formData.budgetstatus,
+                        scope: formData.scopestatus,
+                        justificationtiming: formData.timingjustification,
+                        justificationbudget: formData.budgetjustification,
+                        justificationscope: formData.scopejustification,
+                    })
+                    .eq('ragid', formData.ragid)
+
+                error = ragErr
             } else if (activeModal === 'addRisk') {
                 const { error: err } = await supabase
                     .from('risk')
@@ -139,7 +234,7 @@ export default function ProjectDetail() {
                         ...formData,
                         projectid: projectId,
                         createdat: new Date().toISOString(),
-                        createdbbyemail: 'user@example.com', // Placeholder
+                        createdbbyemail: currentUser.email,
                     }])
                 error = err
             } else if (activeModal === 'addDeliverable') {
@@ -205,20 +300,27 @@ export default function ProjectDetail() {
     }
 
     const getTimingStatus = () => {
-        // This would be calculated based on timeline
-        return { status: 'At Risk', justification: 'Vendor delay.' }
+        const latest = ragStatuses.length > 0 ? ragStatuses[0] : null
+        return {
+            status: latest?.timing || 'Green',
+            justification: latest?.justificationtiming || 'On schedule'
+        }
     }
 
     const getBudgetStatus = () => {
-        const progress = project.percentcompleted || 0
-
-        if (progress > 100) return { status: 'Over budget', justification: 'Scope creep.' }
-        if (progress > 90) return { status: 'At risk', justification: 'High utilization.' }
-        return { status: 'On track', justification: 'Within budget.' }
+        const latest = ragStatuses.length > 0 ? ragStatuses[0] : null
+        return {
+            status: latest?.budget || 'Green',
+            justification: latest?.justificationbudget || 'Within budget'
+        }
     }
 
     const getScopeStatus = () => {
-        return { status: 'On track', justification: 'All deliverables on schedule.' }
+        const latest = ragStatuses.length > 0 ? ragStatuses[0] : null
+        return {
+            status: latest?.scope || 'Green',
+            justification: latest?.justificationscope || 'All deliverables on schedule'
+        }
     }
 
     return (
@@ -261,7 +363,7 @@ export default function ProjectDetail() {
                         </div>
                     )}
                     <button className="btn btn-secondary" onClick={() => openModal('editProject')}>✏️ Edit Project</button>
-                    <button className="btn btn-primary">⏱️ TimeSheet</button>
+                    <button className="btn btn-primary" onClick={() => openModal('updateStatus')}>📊 Update Status</button>
                 </div>
             </div>
 
@@ -298,7 +400,7 @@ export default function ProjectDetail() {
             <TabNavigation
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
-                tabs={['overview', 'risks', 'deliverables', 'achievements', 'timesheets']}
+                tabs={['overview', 'rag-status', 'risks', 'deliverables', 'achievements', 'timesheets']}
             />
 
             <div className={styles.tabContent}>
@@ -323,6 +425,47 @@ export default function ProjectDetail() {
                                 )}
                             </div>
                         </div>
+                    </div>
+
+                )}
+
+                {activeTab === 'rag-status' && (
+                    <div className={styles.tableContainer}>
+                        <div className={styles.tableHeader}>
+                            <h3>RAG Status History ({ragStatuses.length})</h3>
+                            <button className="btn btn-primary btn-sm" onClick={() => openModal('updateStatus')}>+ Update Status</button>
+                        </div>
+                        {ragStatuses.length === 0 ? (
+                            <p className={styles.emptyMessage}>No status updates recorded.</p>
+                        ) : (
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Timing</th>
+                                        <th>Budget</th>
+                                        <th>Scope</th>
+                                        <th>Updated By</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {ragStatuses.map((rag) => (
+                                        <tr key={rag.ragid}>
+                                            <td>{new Date(rag.createdon).toLocaleDateString()} {new Date(rag.createdon).toLocaleTimeString()}</td>
+                                            <td><span className={`badge badge-${rag.timing === 'Green' ? 'success' : rag.timing === 'Amber' ? 'warning' : 'danger'}`}>{rag.timing}</span></td>
+                                            <td><span className={`badge badge-${rag.budget === 'Green' ? 'success' : rag.budget === 'Amber' ? 'warning' : 'danger'}`}>{rag.budget}</span></td>
+                                            <td><span className={`badge badge-${rag.scope === 'Green' ? 'success' : rag.scope === 'Amber' ? 'warning' : 'danger'}`}>{rag.scope}</span></td>
+                                            <td>{rag.createdbyemail}</td>
+                                            <td>
+                                                <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => openModal('editRagStatus', rag)} style={{ marginRight: '5px' }}>✏️</button>
+                                                <button className="btn btn-sm btn-outline-danger" onClick={() => handleRagStatusDelete(rag.ragid)}>🗑️</button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
                     </div>
                 )}
 
@@ -538,6 +681,117 @@ export default function ProjectDetail() {
                 </form>
             </Modal>
 
+            {/* Update Status Modal */}
+            <Modal
+                isOpen={activeModal === 'updateStatus' || activeModal === 'editRagStatus'}
+                onClose={closeModal}
+                title={activeModal === 'editRagStatus' ? "Edit Status Entry" : "Update Project Status"}
+            >
+                <form onSubmit={handleSubmit}>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Project Progress (%)</label>
+                        <input
+                            type="number"
+                            name="percentcompleted"
+                            value={formData.percentcompleted || 0}
+                            onChange={handleInputChange}
+                            className={modalStyles.input}
+                            min="0"
+                            max="100"
+                        />
+                    </div>
+
+                    {/* Timing Status */}
+                    <div className={styles.sectionDivider}>
+                        <h4>Timing Status</h4>
+                    </div>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Status</label>
+                        <select
+                            name="timingstatus"
+                            value={formData.timingstatus || 'Green'}
+                            onChange={handleInputChange}
+                            className={modalStyles.select}
+                        >
+                            <option value="Green">Green</option>
+                            <option value="Amber">Amber</option>
+                            <option value="Red">Red</option>
+                        </select>
+                    </div>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Justification</label>
+                        <textarea
+                            name="timingjustification"
+                            value={formData.timingjustification || ''}
+                            onChange={handleInputChange}
+                            className={modalStyles.textarea}
+                            rows={2}
+                        />
+                    </div>
+
+                    {/* Budget Status */}
+                    <div className={styles.sectionDivider}>
+                        <h4>Budget Status</h4>
+                    </div>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Status</label>
+                        <select
+                            name="budgetstatus"
+                            value={formData.budgetstatus || 'Green'}
+                            onChange={handleInputChange}
+                            className={modalStyles.select}
+                        >
+                            <option value="Green">Green</option>
+                            <option value="Amber">Amber</option>
+                            <option value="Red">Red</option>
+                        </select>
+                    </div>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Justification</label>
+                        <textarea
+                            name="budgetjustification"
+                            value={formData.budgetjustification || ''}
+                            onChange={handleInputChange}
+                            className={modalStyles.textarea}
+                            rows={2}
+                        />
+                    </div>
+
+                    {/* Scope Status */}
+                    <div className={styles.sectionDivider}>
+                        <h4>Scope Status</h4>
+                    </div>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Status</label>
+                        <select
+                            name="scopestatus"
+                            value={formData.scopestatus || 'Green'}
+                            onChange={handleInputChange}
+                            className={modalStyles.select}
+                        >
+                            <option value="Green">Green</option>
+                            <option value="Amber">Amber</option>
+                            <option value="Red">Red</option>
+                        </select>
+                    </div>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Justification</label>
+                        <textarea
+                            name="scopejustification"
+                            value={formData.scopejustification || ''}
+                            onChange={handleInputChange}
+                            className={modalStyles.textarea}
+                            rows={2}
+                        />
+                    </div>
+
+                    <div className={modalStyles.actions}>
+                        <button type="button" className="btn btn-secondary" onClick={closeModal}>Cancel</button>
+                        <button type="submit" className="btn btn-primary">Save Status</button>
+                    </div>
+                </form>
+            </Modal>
+
             {/* Add Risk Modal */}
             <Modal
                 isOpen={activeModal === 'addRisk'}
@@ -745,6 +999,6 @@ export default function ProjectDetail() {
                     </div>
                 </form>
             </Modal>
-        </div>
+        </div >
     )
 }

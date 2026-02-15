@@ -16,9 +16,9 @@ export default function StatusCard({ title, status, justification, type }: Statu
 
     const getStatusClass = () => {
         const s = status.toLowerCase()
-        if (s.includes('risk') || s.includes('delayed')) return 'warning'
-        if (s.includes('over') || s.includes('critical')) return 'danger'
-        if (s.includes('track') || s.includes('good')) return 'success'
+        if (s === 'green' || s.includes('track') || s.includes('good')) return 'success'
+        if (s === 'amber' || s.includes('risk') || s.includes('delayed')) return 'warning'
+        if (s === 'red' || s.includes('over') || s.includes('critical')) return 'danger'
         return 'primary'
     }
 

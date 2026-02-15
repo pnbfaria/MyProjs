@@ -13,8 +13,6 @@ export default function UsersBackoffice() {
         email: '',
         firstname: '',
         lastname: '',
-        jobtitle: '',
-        phonenumber: '',
     })
 
     useEffect(() => {
@@ -50,7 +48,7 @@ export default function UsersBackoffice() {
 
             if (error) throw error
 
-            setFormData({ email: '', firstname: '', lastname: '', jobtitle: '', phonenumber: '' })
+            setFormData({ email: '', firstname: '', lastname: '' })
             setShowForm(false)
             fetchUsers()
         } catch (error) {
@@ -138,25 +136,6 @@ export default function UsersBackoffice() {
                                     onChange={(e) => setFormData({ ...formData, lastname: e.target.value })}
                                 />
                             </div>
-                            <div className="form-group">
-                                <label className="label">Job Title</label>
-                                <input
-                                    type="text"
-                                    className="input"
-                                    value={formData.jobtitle}
-                                    onChange={(e) => setFormData({ ...formData, jobtitle: e.target.value })}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-group">
-                            <label className="label">Phone Number</label>
-                            <input
-                                type="tel"
-                                className="input"
-                                value={formData.phonenumber}
-                                onChange={(e) => setFormData({ ...formData, phonenumber: e.target.value })}
-                            />
                         </div>
 
                         <button type="submit" className="btn btn-primary">
@@ -179,8 +158,6 @@ export default function UsersBackoffice() {
                             <tr>
                                 <th>Email</th>
                                 <th>Name</th>
-                                <th>Job Title</th>
-                                <th>Phone</th>
                                 <th>Joined At</th>
                                 <th>Actions</th>
                             </tr>
@@ -192,8 +169,6 @@ export default function UsersBackoffice() {
                                     <td className="font-semibold">
                                         {user.firstname} {user.lastname}
                                     </td>
-                                    <td>{user.jobtitle || '-'}</td>
-                                    <td>{user.phonenumber || '-'}</td>
                                     <td>{new Date(user.joinedat).toLocaleDateString()}</td>
                                     <td>
                                         <button

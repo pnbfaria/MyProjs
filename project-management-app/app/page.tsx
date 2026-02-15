@@ -76,6 +76,43 @@ export default function Home() {
         return project.percentcompleted || 0
     }
 
+    async function deleteProject(e: React.MouseEvent, projectId: number) {
+        e.preventDefault()
+        e.stopPropagation()
+
+        if (!confirm('Are you sure you want to delete this project? This will delete all related data.')) return
+
+        try {
+            setLoading(true)
+
+            // Delete dependent records first (ignoring errors if tables don't exist or are empty, but logically we should separate)
+            // Use Promise.all for parallel deletion of child records
+            await Promise.all([
+                supabase.from('ragstatus').delete().eq('projectid', projectId),
+                supabase.from('timesheet').delete().eq('projectid', projectId),
+                supabase.from('risk').delete().eq('projectid', projectId),
+                supabase.from('deliverable').delete().eq('projectid', projectId),
+                supabase.from('achievement').delete().eq('projectid', projectId),
+                supabase.from('registration').delete().eq('projectid', projectId)
+            ])
+
+            // Finally delete the project
+            const { error } = await supabase
+                .from('project')
+                .delete()
+                .eq('projectid', projectId)
+
+            if (error) throw error
+
+            setProjects(projects.filter(p => p.projectid !== projectId))
+        } catch (error: any) {
+            console.error('Error deleting project:', error)
+            alert(`Failed to delete project: ${error.message || 'Unknown error'}`)
+        } finally {
+            setLoading(false)
+        }
+    }
+
     if (loading) {
         return (
             <div className={styles.loading}>
@@ -89,14 +126,13 @@ export default function Home() {
         <div className={styles.container}>
             <div className={styles.header}>
                 <div>
-                    <h1 className={styles.title}>Projects</h1>
+                    <h1 className={styles.title}>Projects Dashboard</h1>
                     <p className={styles.subtitle}>
                         Manage and track all your projects in one place
                     </p>
                 </div>
-                <Link href="/project/new" className="btn btn-primary">
-                    <span>➕</span>
-                    New Project
+                <Link href="/project/create" className="btn btn-primary" style={{ textDecoration: 'none' }}>
+                    + New Project
                 </Link>
             </div>
 
@@ -146,9 +182,18 @@ export default function Home() {
                                     <h3 className={styles.projectName}>{project.title}</h3>
                                     <p className={styles.projectId}>ID: P-{project.projectid}</p>
                                 </div>
-                                <span className={`badge badge-${getStatusColor(project.projectstatus)}`}>
-                                    {project.projectstatus}
-                                </span>
+                                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                    <span className={`badge badge-${getStatusColor(project.projectstatus)}`}>
+                                        {project.projectstatus}
+                                    </span>
+                                    <button
+                                        className={styles.deleteBtn}
+                                        onClick={(e) => deleteProject(e, project.projectid)}
+                                        title="Delete Project"
+                                    >
+                                        🗑️
+                                    </button>
+                                </div>
                             </div>
 
                             <p className={styles.description}>

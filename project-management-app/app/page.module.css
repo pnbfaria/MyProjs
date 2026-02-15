@@ -94,6 +94,7 @@
     align-items: start;
     justify-content: space-between;
     gap: var(--space-md);
+    position: relative;
 }
 
 .projectName {
@@ -109,6 +110,30 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+}
+
+.deleteBtn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.25rem;
+    padding: 4px;
+    /* Using fixed px if vars not available, or assume space-xs */
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-base);
+    opacity: 0.5;
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+}
+
+.deleteBtn:hover {
+    opacity: 1;
+    background-color: rgba(230, 0, 18, 0.1);
+    color: #E60012;
+    transform: scale(1.1);
 }
 
 .description {
