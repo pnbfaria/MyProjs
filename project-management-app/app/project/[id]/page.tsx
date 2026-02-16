@@ -143,6 +143,42 @@ export default function ProjectDetail() {
                 scopestatus: data.scope,
                 scopejustification: data.justificationscope,
             })
+        } else if (modalName === 'addRisk') {
+            setFormData({
+                importance: 'Low',
+                status: 'Identified',
+            })
+        } else if (modalName === 'editRisk' && data) {
+            setFormData({
+                riskid: data.riskid,
+                title: data.title,
+                description: data.description,
+                importance: data.importance,
+                status: data.status,
+            })
+        } else if (modalName === 'addDeliverable') {
+            setFormData({
+                status: 'Pending',
+            })
+        } else if (modalName === 'editDeliverable' && data) {
+            setFormData({
+                deliverableid: data.deliverableid,
+                title: data.title,
+                description: data.description,
+                duedate: data.duedate?.split('T')[0] || '',
+                status: data.status,
+            })
+        } else if (modalName === 'addAchievement') {
+            setFormData({
+                dateachieved: new Date().toISOString().split('T')[0],
+            })
+        } else if (modalName === 'editAchievement' && data) {
+            setFormData({
+                achievementid: data.achievementid,
+                title: data.title,
+                description: data.description,
+                dateachieved: data.dateachieved?.split('T')[0] || '',
+            })
         } else if (modalName === 'addTimesheet') {
             setSelectedMonths([])
             if (data?.useremail) {
@@ -190,6 +226,24 @@ export default function ProjectDetail() {
                 return [...prev, month].sort((a, b) => a - b)
             }
         })
+    }
+
+    const handleDeleteItem = async (table: string, idField: string, idValue: number) => {
+        if (!confirm(`Are you sure you want to delete this ${table}?`)) return
+
+        try {
+            const { error } = await supabase
+                .from(table)
+                .delete()
+                .eq(idField, idValue)
+
+            if (error) throw error
+
+            await fetchProjectDetails()
+        } catch (error) {
+            console.error(`Error deleting ${table}:`, error)
+            alert(`Failed to delete ${table}. Please try again.`)
+        }
     }
 
     const handleTimesheetDelete = async (timesheetId: number) => {
@@ -289,9 +343,14 @@ export default function ProjectDetail() {
                     .insert([{
                         ...formData,
                         projectid: projectId,
-                        createdat: new Date().toISOString(),
-                        createdbbyemail: currentUser.email,
                     }])
+                error = err
+            } else if (activeModal === 'editRisk') {
+                const { riskid, ...updateData } = formData
+                const { error: err } = await supabase
+                    .from('risk')
+                    .update(updateData)
+                    .eq('riskid', riskid)
                 error = err
             } else if (activeModal === 'addDeliverable') {
                 const { error: err } = await supabase
@@ -299,9 +358,14 @@ export default function ProjectDetail() {
                     .insert([{
                         ...formData,
                         projectid: projectId,
-                        status: 'Pending',
-                        createdat: new Date().toISOString(),
                     }])
+                error = err
+            } else if (activeModal === 'editDeliverable') {
+                const { deliverableid, ...updateData } = formData
+                const { error: err } = await supabase
+                    .from('deliverable')
+                    .update(updateData)
+                    .eq('deliverableid', deliverableid)
                 error = err
             } else if (activeModal === 'addAchievement') {
                 const { error: err } = await supabase
@@ -309,8 +373,14 @@ export default function ProjectDetail() {
                     .insert([{
                         ...formData,
                         projectid: projectId,
-                        createdat: new Date().toISOString(),
                     }])
+                error = err
+            } else if (activeModal === 'editAchievement') {
+                const { achievementid, ...updateData } = formData
+                const { error: err } = await supabase
+                    .from('achievement')
+                    .update(updateData)
+                    .eq('achievementid', achievementid)
                 error = err
             } else if (activeModal === 'addTimesheet') {
                 if (selectedMonths.length === 0) {
@@ -560,6 +630,7 @@ export default function ProjectDetail() {
                                         <th>Description</th>
                                         <th>Importance</th>
                                         <th>Status</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -569,6 +640,10 @@ export default function ProjectDetail() {
                                             <td>{risk.description}</td>
                                             <td><span className={`badge badge-${risk.importance === 'High' ? 'danger' : 'warning'}`}>{risk.importance}</span></td>
                                             <td>{risk.status}</td>
+                                            <td>
+                                                <button className="btn btn-sm btn-outline-secondary" onClick={() => openModal('editRisk', risk)} style={{ marginRight: '5px' }}>✏️</button>
+                                                <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeleteItem('risk', 'riskid', risk.riskid)}>🗑️</button>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -593,6 +668,7 @@ export default function ProjectDetail() {
                                         <th>Description</th>
                                         <th>Due Date</th>
                                         <th>Status</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -602,6 +678,10 @@ export default function ProjectDetail() {
                                             <td>{deliverable.description}</td>
                                             <td>{deliverable.duedate ? new Date(deliverable.duedate).toLocaleDateString() : 'N/A'}</td>
                                             <td><span className="badge badge-success">{deliverable.status}</span></td>
+                                            <td>
+                                                <button className="btn btn-sm btn-outline-secondary" onClick={() => openModal('editDeliverable', deliverable)} style={{ marginRight: '5px' }}>✏️</button>
+                                                <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeleteItem('deliverable', 'deliverableid', deliverable.deliverableid)}>🗑️</button>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -625,6 +705,7 @@ export default function ProjectDetail() {
                                         <th>Title</th>
                                         <th>Description</th>
                                         <th>Date Achieved</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -633,6 +714,10 @@ export default function ProjectDetail() {
                                             <td>{achievement.title}</td>
                                             <td>{achievement.description}</td>
                                             <td>{new Date(achievement.dateachieved).toLocaleDateString()}</td>
+                                            <td>
+                                                <button className="btn btn-sm btn-outline-secondary" onClick={() => openModal('editAchievement', achievement)} style={{ marginRight: '5px' }}>✏️</button>
+                                                <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeleteItem('achievement', 'achievementid', achievement.achievementid)}>🗑️</button>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -891,11 +976,11 @@ export default function ProjectDetail() {
                 </form>
             </Modal>
 
-            {/* Add Risk Modal */}
+            {/* Add/Edit Risk Modal */}
             <Modal
-                isOpen={activeModal === 'addRisk'}
+                isOpen={activeModal === 'addRisk' || activeModal === 'editRisk'}
                 onClose={closeModal}
-                title="Add New Risk"
+                title={activeModal === 'editRisk' ? 'Edit Risk' : 'Add New Risk'}
             >
                 <form onSubmit={handleSubmit}>
                     <div className={modalStyles.formGroup}>
@@ -903,6 +988,7 @@ export default function ProjectDetail() {
                         <input
                             type="text"
                             name="title"
+                            value={formData.title || ''}
                             onChange={handleInputChange}
                             className={modalStyles.input}
                             required
@@ -912,6 +998,7 @@ export default function ProjectDetail() {
                         <label className={modalStyles.label}>Description</label>
                         <textarea
                             name="description"
+                            value={formData.description || ''}
                             onChange={handleInputChange}
                             className={modalStyles.textarea}
                             required
@@ -921,6 +1008,7 @@ export default function ProjectDetail() {
                         <label className={modalStyles.label}>Importance</label>
                         <select
                             name="importance"
+                            value={formData.importance || 'Low'}
                             onChange={handleInputChange}
                             className={modalStyles.select}
                         >
@@ -934,6 +1022,7 @@ export default function ProjectDetail() {
                         <label className={modalStyles.label}>Status</label>
                         <select
                             name="status"
+                            value={formData.status || 'Identified'}
                             onChange={handleInputChange}
                             className={modalStyles.select}
                         >
@@ -944,16 +1033,16 @@ export default function ProjectDetail() {
                     </div>
                     <div className={modalStyles.actions}>
                         <button type="button" className="btn btn-secondary" onClick={closeModal}>Cancel</button>
-                        <button type="submit" className="btn btn-primary">Add Risk</button>
+                        <button type="submit" className="btn btn-primary">{activeModal === 'editRisk' ? 'Save Changes' : 'Add Risk'}</button>
                     </div>
                 </form>
             </Modal>
 
-            {/* Add Deliverable Modal */}
+            {/* Add/Edit Deliverable Modal */}
             <Modal
-                isOpen={activeModal === 'addDeliverable'}
+                isOpen={activeModal === 'addDeliverable' || activeModal === 'editDeliverable'}
                 onClose={closeModal}
-                title="Add New Deliverable"
+                title={activeModal === 'editDeliverable' ? 'Edit Deliverable' : 'Add New Deliverable'}
             >
                 <form onSubmit={handleSubmit}>
                     <div className={modalStyles.formGroup}>
@@ -961,6 +1050,7 @@ export default function ProjectDetail() {
                         <input
                             type="text"
                             name="title"
+                            value={formData.title || ''}
                             onChange={handleInputChange}
                             className={modalStyles.input}
                             required
@@ -970,6 +1060,7 @@ export default function ProjectDetail() {
                         <label className={modalStyles.label}>Description</label>
                         <textarea
                             name="description"
+                            value={formData.description || ''}
                             onChange={handleInputChange}
                             className={modalStyles.textarea}
                             required
@@ -980,22 +1071,37 @@ export default function ProjectDetail() {
                         <input
                             type="date"
                             name="duedate"
+                            value={formData.duedate || ''}
                             onChange={handleInputChange}
                             className={modalStyles.input}
                         />
                     </div>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Status</label>
+                        <select
+                            name="status"
+                            value={formData.status || 'Pending'}
+                            onChange={handleInputChange}
+                            className={modalStyles.select}
+                        >
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Delayed">Delayed</option>
+                        </select>
+                    </div>
                     <div className={modalStyles.actions}>
                         <button type="button" className="btn btn-secondary" onClick={closeModal}>Cancel</button>
-                        <button type="submit" className="btn btn-primary">Add Deliverable</button>
+                        <button type="submit" className="btn btn-primary">{activeModal === 'editDeliverable' ? 'Save Changes' : 'Add Deliverable'}</button>
                     </div>
                 </form>
             </Modal>
 
-            {/* Add Achievement Modal */}
+            {/* Add/Edit Achievement Modal */}
             <Modal
-                isOpen={activeModal === 'addAchievement'}
+                isOpen={activeModal === 'addAchievement' || activeModal === 'editAchievement'}
                 onClose={closeModal}
-                title="Add New Achievement"
+                title={activeModal === 'editAchievement' ? 'Edit Achievement' : 'Add New Achievement'}
             >
                 <form onSubmit={handleSubmit}>
                     <div className={modalStyles.formGroup}>
@@ -1003,6 +1109,7 @@ export default function ProjectDetail() {
                         <input
                             type="text"
                             name="title"
+                            value={formData.title || ''}
                             onChange={handleInputChange}
                             className={modalStyles.input}
                             required
@@ -1012,6 +1119,7 @@ export default function ProjectDetail() {
                         <label className={modalStyles.label}>Description</label>
                         <textarea
                             name="description"
+                            value={formData.description || ''}
                             onChange={handleInputChange}
                             className={modalStyles.textarea}
                             required
@@ -1022,6 +1130,7 @@ export default function ProjectDetail() {
                         <input
                             type="date"
                             name="dateachieved"
+                            value={formData.dateachieved || ''}
                             onChange={handleInputChange}
                             className={modalStyles.input}
                             required
@@ -1029,7 +1138,7 @@ export default function ProjectDetail() {
                     </div>
                     <div className={modalStyles.actions}>
                         <button type="button" className="btn btn-secondary" onClick={closeModal}>Cancel</button>
-                        <button type="submit" className="btn btn-primary">Add Achievement</button>
+                        <button type="submit" className="btn btn-primary">{activeModal === 'editAchievement' ? 'Save Changes' : 'Add Achievement'}</button>
                     </div>
                 </form>
             </Modal>
