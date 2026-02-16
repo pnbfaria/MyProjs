@@ -66,8 +66,6 @@ export interface Risk {
     importance: string
     status: string
     ownermail?: string
-    createdat: string
-    createdbbyemail: string
     regulation?: string
 }
 
@@ -78,7 +76,6 @@ export interface Deliverable {
     description: string
     duedate?: string
     status: string
-    createdat: string
 }
 
 export interface Achievement {
@@ -88,7 +85,6 @@ export interface Achievement {
     description: string
     dateachieved: string
     regulation?: string
-    createdat: string
 }
 
 export interface Registration {
