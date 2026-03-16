@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { getCreateProjectFormData, createProject } from '@/app/actions/createProjectActions'
 import { useUser } from '@/context/UserContext'
 import { Client, AppUser, PriceType } from '@/types/database'
 import styles from './page.module.css'
@@ -40,22 +40,10 @@ export default function CreateProject() {
 
     async function fetchDropdownData() {
         try {
-            const [clientsRes, usersRes, priceTypesRes] = await Promise.all([
-                supabase.from('Client').select('*').order('name'),
-                supabase.from('appuser').select('*').eq('isactive', true).order('firstname'),
-                supabase.from('pricingtype').select('*').order('name')
-            ])
-
-            if (clientsRes.error) console.error('Error fetching clients:', clientsRes.error)
-            if (usersRes.error) console.error('Error fetching users:', usersRes.error)
-            if (priceTypesRes.error) {
-                console.error('Error fetching price types:', priceTypesRes.error)
-                // If pricingtype table doesn't exist or error, we might handle it gracefully or alert
-            }
-
-            setClients(clientsRes.data || [])
-            setUsers(usersRes.data || [])
-            setPriceTypes(priceTypesRes.data || [])
+            const data = await getCreateProjectFormData()
+            setClients(data.clients)
+            setUsers(data.users)
+            setPriceTypes(data.priceTypes)
         } catch (error) {
             console.error('Error initializing form data:', error)
         } finally {
@@ -97,12 +85,7 @@ export default function CreateProject() {
                 percentcompleted: 0
             }
 
-            const { data, error } = await supabase
-                .from('project')
-                .insert([projectData])
-                .select()
-
-            if (error) throw error
+            await createProject(projectData)
 
             router.push('/') // Redirect to dashboard
         } catch (error: any) {

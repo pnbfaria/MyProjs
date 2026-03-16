@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { getClients, createClient, deleteClient } from '@/app/actions/clientActions'
+import { getProjects } from '@/app/actions/projectActions'
 import { Project, Client } from '@/types/database'
 import styles from '../users/page.module.css'
 import { useUser } from '@/context/UserContext'
@@ -30,36 +31,17 @@ export default function ClientsBackoffice() {
     async function fetchClients() {
         try {
             // Fetch explicit clients from client table
-            const { data: clientsData, error: clientsError } = await supabase
-                .from('Client')
-                .select('*')
-                .order('created_at', { ascending: false })
-
-            if (clientsError) {
-                // If table doesn't exist, we might get an error.
-                // For now, let's log it.
-                console.error('Error fetching clients table:', clientsError)
-                if (clientsError.code === '42P01') {
-                    // Table doesn't exist
-                    alert('Client table does not exist. Please run the migration script.')
-                }
-                throw clientsError
-            }
+            const clientsData = await getClients()
 
             // Fetch projects to compute stats
-            // Ideally we would join, but for now fetch all and map in memory if dataset is small
-            const { data: projectsData, error: projectsError } = await supabase
-                .from('project')
-                .select('*')
-
-            if (projectsError) throw projectsError
+            const projectsData = await getProjects()
 
             const clientsWithStats = (clientsData || []).map((client: Client) => {
                 const clientProjects = (projectsData || []).filter((p: Project) => p.clientid === client.id)
                 return {
                     ...client,
                     projectCount: clientProjects.length,
-                    totalBudget: clientProjects.reduce((sum, p) => sum + (p.totalbudget || 0), 0),
+                    totalBudget: clientProjects.reduce((sum, p) => sum + (Number(p.totalbudget) || 0), 0),
                     projects: clientProjects
                 }
             })
@@ -80,18 +62,7 @@ export default function ClientsBackoffice() {
         }
 
         try {
-            const { error } = await supabase
-                .from('Client')
-                .insert([{
-                    name: formData.name,
-                    description: formData.description,
-                    created_by: currentUser.email,
-                    created_at: new Date().toISOString()
-                }])
-
-            if (error) throw error
-
-            if (error) throw error
+            await createClient(formData.name, formData.description)
 
             setFormData({ name: '', description: '' })
             setShowForm(false)
@@ -106,12 +77,7 @@ export default function ClientsBackoffice() {
         if (!confirm('Are you sure you want to delete this client?')) return
 
         try {
-            const { error } = await supabase
-                .from('Client')
-                .delete()
-                .eq('id', clientId)
-
-            if (error) throw error
+            await deleteClient(clientId)
             fetchClients()
         } catch (error: any) {
             console.error('Error deleting client:', error)

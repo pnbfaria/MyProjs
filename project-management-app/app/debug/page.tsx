@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { testDatabaseConnection } from '@/app/actions/debugActions'
 
 export default function DebugPage() {
     const [debugInfo, setDebugInfo] = useState<any>({})
@@ -12,57 +12,14 @@ export default function DebugPage() {
     }, [])
 
     async function testConnection() {
-        const results: any = {}
-
-        // Test environment variables
-        results.envVars = {
-            url: process.env.NEXT_PUBLIC_SUPABASE_URL || 'NOT SET',
-            keyExists: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-            keyLength: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.length || 0
-        }
-
-        // Test project table
         try {
-            const { data, error, count } = await supabase
-                .from('project')
-                .select('*', { count: 'exact' })
-
-            results.projectTable = {
-                success: !error,
-                error: error?.message || null,
-                count: count,
-                sampleData: data?.slice(0, 2) || []
-            }
-        } catch (err: any) {
-            results.projectTable = {
-                success: false,
-                error: err.message,
-                count: 0
-            }
+            const results = await testDatabaseConnection()
+            setDebugInfo(results)
+        } catch (error) {
+            console.error('Error testing connection:', error)
+        } finally {
+            setLoading(false)
         }
-
-        // Test appuser table
-        try {
-            const { data, error, count } = await supabase
-                .from('appuser')
-                .select('*', { count: 'exact' })
-
-            results.appuserTable = {
-                success: !error,
-                error: error?.message || null,
-                count: count,
-                sampleData: data?.slice(0, 2) || []
-            }
-        } catch (err: any) {
-            results.appuserTable = {
-                success: false,
-                error: err.message,
-                count: 0
-            }
-        }
-
-        setDebugInfo(results)
-        setLoading(false)
     }
 
     if (loading) {

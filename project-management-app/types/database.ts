@@ -65,8 +65,9 @@ export interface Risk {
     description: string
     importance: string
     status: string
-    ownermail?: string
+    owneremail?: string
     regulation?: string
+    ComeToPass?: boolean
 }
 
 export interface Deliverable {

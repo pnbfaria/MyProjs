@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { getProjects, deleteProject } from './actions/projectActions'
 import { Project, AppUser } from '@/types/database'
 import styles from './page.module.css'
 
@@ -22,36 +22,7 @@ export default function Home() {
 
     async function fetchProjects() {
         try {
-            const { data: projectsData, error } = await supabase
-                .from('project')
-                .select('*')
-                .order('createdon', { ascending: false })
-
-            if (error) throw error
-
-            // Fetch managers for each project
-            const projectsWithManagers = await Promise.all(
-                (projectsData || []).map(async (project) => {
-                    const { data: accountMgr } = await supabase
-                        .from('appuser')
-                        .select('*')
-                        .eq('email', project.accountmanageremail)
-                        .single()
-
-                    const { data: deliveryMgr } = await supabase
-                        .from('appuser')
-                        .select('*')
-                        .eq('email', project.deliverymanageremail)
-                        .single()
-
-                    return {
-                        ...project,
-                        accountManager: accountMgr,
-                        deliveryManager: deliveryMgr,
-                    }
-                })
-            )
-
+            const projectsWithManagers = await getProjects()
             setProjects(projectsWithManagers)
         } catch (error) {
             console.error('Error fetching projects:', error)
@@ -76,7 +47,7 @@ export default function Home() {
         return project.percentcompleted || 0
     }
 
-    async function deleteProject(e: React.MouseEvent, projectId: number) {
+    async function handleDeleteProject(e: React.MouseEvent, projectId: number) {
         e.preventDefault()
         e.stopPropagation()
 
@@ -84,26 +55,7 @@ export default function Home() {
 
         try {
             setLoading(true)
-
-            // Delete dependent records first (ignoring errors if tables don't exist or are empty, but logically we should separate)
-            // Use Promise.all for parallel deletion of child records
-            await Promise.all([
-                supabase.from('ragstatus').delete().eq('projectid', projectId),
-                supabase.from('timesheet').delete().eq('projectid', projectId),
-                supabase.from('risk').delete().eq('projectid', projectId),
-                supabase.from('deliverable').delete().eq('projectid', projectId),
-                supabase.from('achievement').delete().eq('projectid', projectId),
-                supabase.from('registration').delete().eq('projectid', projectId)
-            ])
-
-            // Finally delete the project
-            const { error } = await supabase
-                .from('project')
-                .delete()
-                .eq('projectid', projectId)
-
-            if (error) throw error
-
+            await deleteProject(projectId)
             setProjects(projects.filter(p => p.projectid !== projectId))
         } catch (error: any) {
             console.error('Error deleting project:', error)
@@ -188,7 +140,7 @@ export default function Home() {
                                     </span>
                                     <button
                                         className={styles.deleteBtn}
-                                        onClick={(e) => deleteProject(e, project.projectid)}
+                                        onClick={(e) => handleDeleteProject(e, project.projectid)}
                                         title="Delete Project"
                                     >
                                         🗑️

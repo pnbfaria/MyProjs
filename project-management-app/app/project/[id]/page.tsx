@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
+import { getProjectDetails, deleteEntity, updateProject, updateEntity, insertRagStatus, insertEntity, insertMultipleTimesheets } from '@/app/actions/projectDetailsActions'
 import { useUser } from '@/context/UserContext'
 import { Project, AppUser, Risk, Deliverable, Achievement, TimeSheet, RagStatus, Role } from '@/types/database'
 import StatusCard from '@/components/StatusCard'
@@ -48,59 +48,16 @@ export default function ProjectDetail() {
 
     async function fetchProjectDetails() {
         try {
-            // Fetch project
-            const { data: projectData, error: projectError } = await supabase
-                .from('project')
-                .select('*')
-                .eq('projectid', projectId)
-                .single()
-
-            if (projectError) throw projectError
-
-            // Fetch managers
-            let accountMgr = null
-            if (projectData.accountmanageremail) {
-                const { data } = await supabase
-                    .from('appuser')
-                    .select('*')
-                    .eq('email', projectData.accountmanageremail)
-                    .single()
-                accountMgr = data
+            const data = await getProjectDetails(parseInt(projectId))
+            if(data) {
+                 setProject(data.project)
+                 setRisks(data.risks)
+                 setDeliverables(data.deliverables)
+                 setAchievements(data.achievements)
+                 setTimeSheets(data.timeSheets)
+                 setRagStatuses(data.ragStatuses)
+                 setRoles(data.roles)
             }
-
-            let deliveryMgr = null
-            if (projectData.deliverymanageremail) {
-                const { data } = await supabase
-                    .from('appuser')
-                    .select('*')
-                    .eq('email', projectData.deliverymanageremail)
-                    .single()
-                deliveryMgr = data
-            }
-
-            setProject({
-                ...projectData,
-                accountManager: accountMgr,
-                deliveryManager: deliveryMgr,
-            })
-
-            // Fetch related data
-            const [risksRes, deliverablesRes, achievementsRes, timeSheetsRes, ragStatusesRes, rolesRes] = await Promise.all([
-                supabase.from('risk').select('*').eq('projectid', projectId),
-                supabase.from('deliverable').select('*').eq('projectid', projectId),
-                supabase.from('achievement').select('*').eq('projectid', projectId),
-                supabase.from('timesheet').select('*').eq('projectid', projectId),
-
-                supabase.from('ragstatus').select('*').eq('projectid', projectId).order('createdon', { ascending: false }),
-                supabase.from('role').select('*'),
-            ])
-
-            setRisks(risksRes.data || [])
-            setDeliverables(deliverablesRes.data || [])
-            setAchievements(achievementsRes.data || [])
-            setTimeSheets(timeSheetsRes.data || [])
-            setRagStatuses(ragStatusesRes.data || [])
-            setRoles(rolesRes.data || [])
         } catch (error) {
             console.error('Error fetching project details:', error)
         } finally {
@@ -118,6 +75,8 @@ export default function ProjectDetail() {
                 percentcompleted: project.percentcompleted,
                 startdate: project.startdate,
                 enddate: project.enddate,
+                accountmanageremail: project.accountmanageremail,
+                deliverymanageremail: project.deliverymanageremail,
             })
         } else if (modalName === 'updateStatus' && project) {
             // Get latest status from ragStatuses state (first element since we sort desc)
@@ -155,6 +114,8 @@ export default function ProjectDetail() {
                 description: data.description,
                 importance: data.importance,
                 status: data.status,
+                ComeToPass: data.ComeToPass,
+                owneremail: data.owneremail,
             })
         } else if (modalName === 'addDeliverable') {
             setFormData({
@@ -196,20 +157,16 @@ export default function ProjectDetail() {
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value } = e.target
-        setFormData((prev: any) => ({ ...prev, [name]: value }))
+        const { name, value, type } = e.target
+        const val = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+        setFormData((prev: any) => ({ ...prev, [name]: val }))
     }
 
     const handleRagStatusDelete = async (ragId: number) => {
         if (!confirm('Are you sure you want to delete this status entry?')) return
 
         try {
-            const { error } = await supabase
-                .from('ragstatus')
-                .delete()
-                .eq('ragid', ragId)
-
-            if (error) throw error
+            await deleteEntity('ragstatus', 'ragid', ragId)
 
             await fetchProjectDetails()
         } catch (error) {
@@ -232,12 +189,7 @@ export default function ProjectDetail() {
         if (!confirm(`Are you sure you want to delete this ${table}?`)) return
 
         try {
-            const { error } = await supabase
-                .from(table)
-                .delete()
-                .eq(idField, idValue)
-
-            if (error) throw error
+            await deleteEntity(table, idField, idValue)
 
             await fetchProjectDetails()
         } catch (error) {
@@ -250,12 +202,7 @@ export default function ProjectDetail() {
         if (!confirm('Are you sure you want to delete this timesheet entry?')) return
 
         try {
-            const { error } = await supabase
-                .from('timesheet')
-                .delete()
-                .eq('timesheetid', timesheetId)
-
-            if (error) throw error
+            await deleteEntity('timesheet', 'timesheetid', timesheetId)
 
             await fetchProjectDetails()
         } catch (error) {
@@ -266,12 +213,7 @@ export default function ProjectDetail() {
 
     const handleTimesheetUpdate = async (timesheetId: number, field: string, value: any) => {
         try {
-            const { error } = await supabase
-                .from('timesheet')
-                .update({ [field]: value })
-                .eq('timesheetid', timesheetId)
-
-            if (error) throw error
+            await updateEntity('timesheet', 'timesheetid', timesheetId, { [field]: value })
             await fetchProjectDetails()
         } catch (error) {
             console.error('Error updating timesheet:', error)
@@ -288,100 +230,48 @@ export default function ProjectDetail() {
         }
 
         try {
-            let error = null
-
             if (activeModal === 'editProject') {
-                const { error: err } = await supabase
-                    .from('project')
-                    .update(formData)
-                    .eq('projectid', projectId)
-                error = err
+                await updateProject(parseInt(projectId), formData)
             } else if (activeModal === 'updateStatus') {
                 // 1. Update project percentcompleted
-                const { error: projErr } = await supabase
-                    .from('project')
-                    .update({
-                        percentcompleted: formData.percentcompleted
-                    })
-                    .eq('projectid', projectId)
-
-                if (projErr) throw projErr
+                await updateProject(parseInt(projectId), { percentcompleted: formData.percentcompleted })
 
                 // 2. Insert new ragstatus record
-                const { error: ragErr } = await supabase
-                    .from('ragstatus')
-                    .insert([{
-                        projectid: projectId,
-                        timing: formData.timingstatus,
-                        budget: formData.budgetstatus,
-                        scope: formData.scopestatus,
-                        justificationtiming: formData.timingjustification,
-                        justificationbudget: formData.budgetjustification,
-                        justificationscope: formData.scopejustification,
-                        createdbyemail: currentUser.email,
-                        createdon: new Date().toISOString()
-                    }])
-
-                error = ragErr
+                await insertRagStatus({
+                    projectid: parseInt(projectId),
+                    timing: formData.timingstatus,
+                    budget: formData.budgetstatus,
+                    scope: formData.scopestatus,
+                    justificationtiming: formData.timingjustification,
+                    justificationbudget: formData.budgetjustification,
+                    justificationscope: formData.scopejustification,
+                    createdbyemail: currentUser.email,
+                    createdon: new Date().toISOString()
+                })
             } else if (activeModal === 'editRagStatus') {
-                const { error: ragErr } = await supabase
-                    .from('ragstatus')
-                    .update({
-                        timing: formData.timingstatus,
-                        budget: formData.budgetstatus,
-                        scope: formData.scopestatus,
-                        justificationtiming: formData.timingjustification,
-                        justificationbudget: formData.budgetjustification,
-                        justificationscope: formData.scopejustification,
-                    })
-                    .eq('ragid', formData.ragid)
-
-                error = ragErr
+                await updateEntity('ragstatus', 'ragid', formData.ragid, {
+                    timing: formData.timingstatus,
+                    budget: formData.budgetstatus,
+                    scope: formData.scopestatus,
+                    justificationtiming: formData.timingjustification,
+                    justificationbudget: formData.budgetjustification,
+                    justificationscope: formData.scopejustification,
+                })
             } else if (activeModal === 'addRisk') {
-                const { error: err } = await supabase
-                    .from('risk')
-                    .insert([{
-                        ...formData,
-                        projectid: projectId,
-                    }])
-                error = err
+                await insertEntity('risk', { ...formData, projectid: parseInt(projectId) })
             } else if (activeModal === 'editRisk') {
                 const { riskid, ...updateData } = formData
-                const { error: err } = await supabase
-                    .from('risk')
-                    .update(updateData)
-                    .eq('riskid', riskid)
-                error = err
+                await updateEntity('risk', 'riskid', riskid, updateData)
             } else if (activeModal === 'addDeliverable') {
-                const { error: err } = await supabase
-                    .from('deliverable')
-                    .insert([{
-                        ...formData,
-                        projectid: projectId,
-                    }])
-                error = err
+                await insertEntity('deliverable', { ...formData, projectid: parseInt(projectId) })
             } else if (activeModal === 'editDeliverable') {
                 const { deliverableid, ...updateData } = formData
-                const { error: err } = await supabase
-                    .from('deliverable')
-                    .update(updateData)
-                    .eq('deliverableid', deliverableid)
-                error = err
+                await updateEntity('deliverable', 'deliverableid', deliverableid, updateData)
             } else if (activeModal === 'addAchievement') {
-                const { error: err } = await supabase
-                    .from('achievement')
-                    .insert([{
-                        ...formData,
-                        projectid: projectId,
-                    }])
-                error = err
+                await insertEntity('achievement', { ...formData, projectid: parseInt(projectId) })
             } else if (activeModal === 'editAchievement') {
                 const { achievementid, ...updateData } = formData
-                const { error: err } = await supabase
-                    .from('achievement')
-                    .update(updateData)
-                    .eq('achievementid', achievementid)
-                error = err
+                await updateEntity('achievement', 'achievementid', achievementid, updateData)
             } else if (activeModal === 'addTimesheet') {
                 if (selectedMonths.length === 0) {
                     alert('Please select at least one month')
@@ -390,8 +280,7 @@ export default function ProjectDetail() {
 
                 const inserts = selectedMonths.map(month => ({
                     ...formData,
-                    projectid: projectId,
-
+                    projectid: parseInt(projectId),
                     useremail: formData.useremail,
                     workload: formData.workload || 0,
                     estworkload: formData.estworkload || 0,
@@ -400,13 +289,8 @@ export default function ProjectDetail() {
                     year: formData.year
                 }))
 
-                const { error: err } = await supabase
-                    .from('timesheet')
-                    .insert(inserts)
-                error = err
+                await insertMultipleTimesheets(inserts)
             }
-
-            if (error) throw error
 
             await fetchProjectDetails()
             closeModal()
@@ -436,6 +320,13 @@ export default function ProjectDetail() {
 
     const calculateProgress = () => {
         return project.percentcompleted || 0
+    }
+
+    const getUserName = (email: string | undefined): string => {
+        if (!email) return 'Unassigned';
+        const normalizedEmail = email.toLowerCase().trim();
+        const user = allUsers.find(u => u.email.toLowerCase().trim() === normalizedEmail);
+        return user ? `${user.firstname} ${user.lastname}` : email;
     }
 
     const getTimingStatus = () => {
@@ -595,19 +486,49 @@ export default function ProjectDetail() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {ragStatuses.map((rag) => (
-                                        <tr key={rag.ragid}>
-                                            <td>{new Date(rag.createdon).toLocaleDateString()} {new Date(rag.createdon).toLocaleTimeString()}</td>
-                                            <td><span className={`badge badge-${rag.timing === 'Green' ? 'success' : rag.timing === 'Amber' ? 'warning' : 'danger'}`}>{rag.timing}</span></td>
-                                            <td><span className={`badge badge-${rag.budget === 'Green' ? 'success' : rag.budget === 'Amber' ? 'warning' : 'danger'}`}>{rag.budget}</span></td>
-                                            <td><span className={`badge badge-${rag.scope === 'Green' ? 'success' : rag.scope === 'Amber' ? 'warning' : 'danger'}`}>{rag.scope}</span></td>
-                                            <td>{rag.createdbyemail}</td>
-                                            <td>
-                                                <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => openModal('editRagStatus', rag)} style={{ marginRight: '5px' }}>✏️</button>
-                                                <button className="btn btn-sm btn-outline-danger" onClick={() => handleRagStatusDelete(rag.ragid)}>🗑️</button>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {ragStatuses.map((rag, index) => {
+                                        const prevRag = ragStatuses[index + 1];
+                                        
+                                        const getTrendIcon = (current: string, previous?: string) => {
+                                            if (!previous) return null;
+                                            const scores: Record<string, number> = { 'Green': 2, 'Amber': 1, 'Red': 0 };
+                                            const currScore = scores[current] ?? -1;
+                                            const prevScore = scores[previous] ?? -1;
+                                            
+                                            if (currScore > prevScore) return <span style={{ color: 'green', marginLeft: '5px', fontWeight: 'bold' }}>↑</span>;
+                                            if (currScore < prevScore) return <span style={{ color: 'red', marginLeft: '5px', fontWeight: 'bold' }}>↓</span>;
+                                            return null;
+                                        };
+
+                                        return (
+                                            <tr key={rag.ragid}>
+                                                <td>{new Date(rag.createdon).toLocaleDateString()} {new Date(rag.createdon).toLocaleTimeString()}</td>
+                                                <td>
+                                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                        <span className={`badge badge-${rag.timing === 'Green' ? 'success' : rag.timing === 'Amber' ? 'warning' : 'danger'}`}>{rag.timing}</span>
+                                                        {getTrendIcon(rag.timing, prevRag?.timing)}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                        <span className={`badge badge-${rag.budget === 'Green' ? 'success' : rag.budget === 'Amber' ? 'warning' : 'danger'}`}>{rag.budget}</span>
+                                                        {getTrendIcon(rag.budget, prevRag?.budget)}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                        <span className={`badge badge-${rag.scope === 'Green' ? 'success' : rag.scope === 'Amber' ? 'warning' : 'danger'}`}>{rag.scope}</span>
+                                                        {getTrendIcon(rag.scope, prevRag?.scope)}
+                                                    </div>
+                                                </td>
+                                                <td>{getUserName(rag.createdbyemail)}</td>
+                                                <td>
+                                                    <button className="btn btn-sm btn-outline-secondary me-2" onClick={() => openModal('editRagStatus', rag)} style={{ marginRight: '5px' }}>✏️</button>
+                                                    <button className="btn btn-sm btn-outline-danger" onClick={() => handleRagStatusDelete(rag.ragid)}>🗑️</button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         )}
@@ -628,7 +549,9 @@ export default function ProjectDetail() {
                                     <tr>
                                         <th>Title</th>
                                         <th>Description</th>
+                                        <th>Owner</th>
                                         <th>Importance</th>
+                                        <th>Come To Pass</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -638,7 +561,16 @@ export default function ProjectDetail() {
                                         <tr key={risk.riskid}>
                                             <td>{risk.title}</td>
                                             <td>{risk.description}</td>
+                                            <td>{getUserName(risk.owneremail)}</td>
                                             <td><span className={`badge badge-${risk.importance === 'High' ? 'danger' : 'warning'}`}>{risk.importance}</span></td>
+                                            <td>
+                                                <input 
+                                                    type="checkbox" 
+                                                    checked={!!risk.ComeToPass} 
+                                                    readOnly 
+                                                    style={{ cursor: 'default' }}
+                                                />
+                                            </td>
                                             <td>{risk.status}</td>
                                             <td>
                                                 <button className="btn btn-sm btn-outline-secondary" onClick={() => openModal('editRisk', risk)} style={{ marginRight: '5px' }}>✏️</button>
@@ -747,27 +679,28 @@ export default function ProjectDetail() {
                                 </thead>
                                 <tbody>
                                     {Object.values(timeSheets.reduce((acc: any, curr) => {
-                                        const email = curr.useremail || 'Unknown';
+                                        const email = curr.useremail ? curr.useremail.toLowerCase().trim() : 'Unknown';
                                         if (!acc[email]) {
-                                            const user = allUsers.find(u => u.email === email);
+                                            const normalizedEmail = email;
+                                            const user = allUsers.find(u => u.email.toLowerCase().trim() === normalizedEmail);
                                             const role = roles.find(r => r.roleid === curr.roleid);
                                             acc[email] = {
                                                 email,
                                                 name: user ? `${user.firstname} ${user.lastname}` : email,
-                                                role: role ? role.name : 'Unknown', // Use name as corrected previously
-                                                roleid: curr.roleid, // Keep for potential future use or if role changes (showing first found)
+                                                role: role ? role.name : 'Unknown',
+                                                roleid: curr.roleid,
                                                 workload: 0,
                                                 estworkload: 0
                                             };
                                         }
-                                        acc[email].workload += (curr.workload || 0);
-                                        acc[email].estworkload += (curr.estworkload || 0);
+                                        acc[email].workload += (Number(curr.workload) || 0);
+                                        acc[email].estworkload += (Number(curr.estworkload) || 0);
                                         return acc;
                                     }, {})).map((row: any) => (
                                         <tr key={row.email}>
                                             <td>
                                                 <div style={{ fontWeight: 500 }}>{row.name}</div>
-                                                <div style={{ fontSize: '0.8em', color: '#666' }}>{row.email}</div>
+                                                {/* <div style={{ fontSize: '0.8em', color: '#888' }}>{row.email}</div> */}
                                             </td>
                                             <td><span className="badge badge-secondary">{row.role}</span></td>
                                             <td>{row.estworkload}</td>
@@ -801,6 +734,38 @@ export default function ProjectDetail() {
                             className={modalStyles.input}
                             required
                         />
+                    </div>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Account Manager</label>
+                        <select
+                            name="accountmanageremail"
+                            value={formData.accountmanageremail || ''}
+                            onChange={handleInputChange}
+                            className={modalStyles.select}
+                        >
+                            <option value="">Select Account Manager</option>
+                            {allUsers.map(user => (
+                                <option key={user.email} value={user.email}>
+                                    {user.firstname} {user.lastname}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Delivery Manager</label>
+                        <select
+                            name="deliverymanageremail"
+                            value={formData.deliverymanageremail || ''}
+                            onChange={handleInputChange}
+                            className={modalStyles.select}
+                        >
+                            <option value="">Select Delivery Manager</option>
+                            {allUsers.map(user => (
+                                <option key={user.email} value={user.email}>
+                                    {user.firstname} {user.lastname}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                     <div className={modalStyles.formGroup}>
                         <label className={modalStyles.label}>Description</label>
@@ -995,6 +960,23 @@ export default function ProjectDetail() {
                         />
                     </div>
                     <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Owner</label>
+                        <select
+                            name="owneremail"
+                            value={formData.owneremail || ''}
+                            onChange={handleInputChange}
+                            className={modalStyles.select}
+                            required
+                        >
+                            <option value="" disabled>Select Owner</option>
+                            {allUsers.map(user => (
+                                <option key={user.email} value={user.email}>
+                                    {user.firstname} {user.lastname}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className={modalStyles.formGroup}>
                         <label className={modalStyles.label}>Description</label>
                         <textarea
                             name="description"
@@ -1030,6 +1012,17 @@ export default function ProjectDetail() {
                             <option value="Mitigated">Mitigated</option>
                             <option value="Closed">Closed</option>
                         </select>
+                    </div>
+                    <div className={modalStyles.formGroup} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <input
+                            type="checkbox"
+                            id="ComeToPass"
+                            name="ComeToPass"
+                            checked={formData.ComeToPass || false}
+                            onChange={handleInputChange}
+                            className={modalStyles.checkbox}
+                        />
+                        <label htmlFor="ComeToPass" className={modalStyles.label} style={{ marginBottom: 0 }}>Come To Pass</label>
                     </div>
                     <div className={modalStyles.actions}>
                         <button type="button" className="btn btn-secondary" onClick={closeModal}>Cancel</button>
@@ -1162,7 +1155,7 @@ export default function ProjectDetail() {
                             <option value="" disabled>Select User</option>
                             {allUsers.map(user => (
                                 <option key={user.email} value={user.email}>
-                                    {user.firstname} {user.lastname} ({user.email})
+                                    {user.firstname} {user.lastname}
                                 </option>
                             ))}
                         </select>
@@ -1251,7 +1244,7 @@ export default function ProjectDetail() {
             <Modal
                 isOpen={activeModal === 'manageUserTimesheets'}
                 onClose={closeModal}
-                title={`Manage Timesheets for ${allUsers.find(u => u.email === userToManage)?.firstname || userToManage}`}
+                title={`Manage Timesheets for ${getUserName(userToManage ?? undefined)}`}
             >
                 <div style={{ marginBottom: '15px', display: 'flex', justifyContent: 'flex-end' }}>
                     <button
