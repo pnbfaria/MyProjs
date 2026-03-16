@@ -2,7 +2,7 @@
 
 import { db } from '@/lib/db'
 import { ProjectWithManagers } from './projectActions'
-import { Risk, Deliverable, Achievement, TimeSheet, RagStatus, Role, Project, AppUser } from '@/types/database'
+import { Risk, Deliverable, Achievement, Decision, TimeSheet, RagStatus, Role, Project, AppUser } from '@/types/database'
 
 export async function getProjectDetails(projectId: number) {
     try {
@@ -29,10 +29,11 @@ export async function getProjectDetails(projectId: number) {
             deliveryManager,
         }
 
-        const [risksRes, deliverablesRes, achievementsRes, timeSheetsRes, ragStatusesRes, rolesRes] = await Promise.all([
+        const [risksRes, deliverablesRes, achievementsRes, decisionsRes, timeSheetsRes, ragStatusesRes, rolesRes] = await Promise.all([
             db.query('SELECT * FROM risk WHERE projectid = $1', [projectId]),
             db.query('SELECT * FROM deliverable WHERE projectid = $1', [projectId]),
             db.query('SELECT * FROM achievement WHERE projectid = $1', [projectId]),
+            db.query('SELECT * FROM decision WHERE projectid = $1', [projectId]),
             db.query('SELECT * FROM timesheet WHERE projectid = $1', [projectId]),
             db.query('SELECT * FROM ragstatus WHERE projectid = $1 ORDER BY createdon DESC', [projectId]),
             db.query('SELECT * FROM role'),
@@ -43,6 +44,7 @@ export async function getProjectDetails(projectId: number) {
             risks: risksRes.rows as Risk[],
             deliverables: deliverablesRes.rows as Deliverable[],
             achievements: achievementsRes.rows as Achievement[],
+            decisions: decisionsRes.rows as Decision[],
             timeSheets: timeSheetsRes.rows as TimeSheet[],
             ragStatuses: ragStatusesRes.rows as RagStatus[],
             roles: rolesRes.rows as Role[],
@@ -57,7 +59,7 @@ export async function getProjectDetails(projectId: number) {
 
 export async function deleteEntity(table: string, idField: string, idValue: number) {
     // Only allow specific tables to prevent SQL injection
-    const allowedTables = ['risk', 'deliverable', 'achievement', 'timesheet', 'ragstatus']
+    const allowedTables = ['risk', 'deliverable', 'achievement', 'timesheet', 'ragstatus', 'decision']
     if (!allowedTables.includes(table)) throw new Error('Invalid table')
 
     try {
@@ -95,7 +97,7 @@ export async function insertRagStatus(data: Omit<RagStatus, 'ragid'>) {
 }
 
 export async function updateEntity(table: string, idField: string, idValue: number, data: any) {
-    const allowedTables = ['risk', 'deliverable', 'achievement', 'timesheet', 'ragstatus']
+    const allowedTables = ['risk', 'deliverable', 'achievement', 'timesheet', 'ragstatus', 'decision']
     if (!allowedTables.includes(table)) throw new Error('Invalid table')
 
     try {
@@ -111,7 +113,7 @@ export async function updateEntity(table: string, idField: string, idValue: numb
 }
 
 export async function insertEntity(table: string, data: any) {
-    const allowedTables = ['risk', 'deliverable', 'achievement', 'timesheet']
+    const allowedTables = ['risk', 'deliverable', 'achievement', 'timesheet', 'decision']
     if (!allowedTables.includes(table)) throw new Error('Invalid table')
 
     try {

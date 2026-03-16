@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { getProjectDetails, deleteEntity, updateProject, updateEntity, insertRagStatus, insertEntity, insertMultipleTimesheets } from '@/app/actions/projectDetailsActions'
 import { useUser } from '@/context/UserContext'
-import { Project, AppUser, Risk, Deliverable, Achievement, TimeSheet, RagStatus, Role } from '@/types/database'
+import { Project, AppUser, Risk, Deliverable, Achievement, Decision, TimeSheet, RagStatus, Role } from '@/types/database'
 import StatusCard from '@/components/StatusCard'
 import GlobalStatusCard from '@/components/GlobalStatusCard'
 import ResourceConsumption from '@/components/ResourceConsumption'
@@ -28,6 +28,7 @@ export default function ProjectDetail() {
     const [risks, setRisks] = useState<Risk[]>([])
     const [deliverables, setDeliverables] = useState<Deliverable[]>([])
     const [achievements, setAchievements] = useState<Achievement[]>([])
+    const [decisions, setDecisions] = useState<Decision[]>([])
 
     const [timeSheets, setTimeSheets] = useState<TimeSheet[]>([])
     const [ragStatuses, setRagStatuses] = useState<RagStatus[]>([])
@@ -54,6 +55,7 @@ export default function ProjectDetail() {
                  setRisks(data.risks)
                  setDeliverables(data.deliverables)
                  setAchievements(data.achievements)
+                 setDecisions(data.decisions)
                  setTimeSheets(data.timeSheets)
                  setRagStatuses(data.ragStatuses)
                  setRoles(data.roles)
@@ -147,6 +149,22 @@ export default function ProjectDetail() {
             }
         } else if (modalName === 'manageUserTimesheets' && data) {
             setUserToManage(data)
+        } else if (modalName === 'addDecision') {
+            setFormData({
+                status: 'To be decided',
+                importance: 'Medium',
+                registedon: new Date().toISOString().split('T')[0],
+            })
+        } else if (modalName === 'editDecision' && data) {
+            setFormData({
+                decisionid: data.decisionid,
+                title: data.title,
+                description: data.description,
+                status: data.status,
+                importance: data.importance,
+                owneremail: data.owneremail,
+                registedon: data.registedon ? new Date(data.registedon).toISOString().split('T')[0] : '',
+            })
         }
         setActiveModal(modalName)
     }
@@ -290,6 +308,28 @@ export default function ProjectDetail() {
                 }))
 
                 await insertMultipleTimesheets(inserts)
+            } else if (activeModal === 'addDecision') {
+                const { title, description, status, owneremail, importance, registedon } = formData
+                await insertEntity('decision', { 
+                    projectid: parseInt(projectId),
+                    title,
+                    description,
+                    status,
+                    owneremail,
+                    importance,
+                    registedon: registedon || new Date().toISOString(),
+                    createdbyemail: currentUser.email 
+                })
+            } else if (activeModal === 'editDecision') {
+                const { decisionid, title, description, status, owneremail, importance, registedon } = formData
+                await updateEntity('decision', 'decisionid', decisionid, {
+                    title,
+                    description,
+                    status,
+                    owneremail,
+                    importance,
+                    registedon: registedon || null
+                })
             }
 
             await fetchProjectDetails()
@@ -436,7 +476,7 @@ export default function ProjectDetail() {
             <TabNavigation
                 activeTab={activeTab}
                 onTabChange={setActiveTab}
-                tabs={['overview', 'rag-status', 'risks', 'deliverables', 'achievements', 'timesheets']}
+                tabs={['overview', 'rag-status', 'risks', 'decisions', 'deliverables', 'achievements', 'timesheets']}
             />
 
             <div className={styles.tabContent}>
@@ -575,6 +615,48 @@ export default function ProjectDetail() {
                                             <td>
                                                 <button className="btn btn-sm btn-outline-secondary" onClick={() => openModal('editRisk', risk)} style={{ marginRight: '5px' }}>✏️</button>
                                                 <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeleteItem('risk', 'riskid', risk.riskid)}>🗑️</button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
+                )}
+
+                {activeTab === 'decisions' && (
+                    <div className={styles.tableContainer}>
+                        <div className={styles.tableHeader}>
+                            <h3>Decisions ({decisions.length})</h3>
+                            <button className="btn btn-primary btn-sm" onClick={() => openModal('addDecision')}>+ Add Decision</button>
+                        </div>
+                        {decisions.length === 0 ? (
+                            <p className={styles.emptyMessage}>No decisions recorded.</p>
+                        ) : (
+                            <table className="table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Description</th>
+                                        <th>Owner</th>
+                                        <th>Status</th>
+                                        <th>Importance</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {decisions.map((decision) => (
+                                        <tr key={decision.decisionid}>
+                                            <td>{decision.title}</td>
+                                            <td>{decision.description}</td>
+                                            <td>{getUserName(decision.owneremail)}</td>
+                                            <td><span className={`badge badge-${decision.status === 'Approved' ? 'success' : decision.status === 'Rejected' ? 'danger' : 'warning'}`}>{decision.status}</span></td>
+                                            <td><span className={`badge badge-${decision.importance === 'High' ? 'danger' : decision.importance === 'Medium' ? 'warning' : 'secondary'}`}>{decision.importance}</span></td>
+                                            <td>{decision.registedon ? new Date(decision.registedon).toLocaleDateString() : 'N/A'}</td>
+                                            <td>
+                                                <button className="btn btn-sm btn-outline-secondary" onClick={() => openModal('editDecision', decision)} style={{ marginRight: '5px' }}>✏️</button>
+                                                <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeleteItem('decision', 'decisionid', decision.decisionid)}>🗑️</button>
                                             </td>
                                         </tr>
                                     ))}
@@ -1132,6 +1214,94 @@ export default function ProjectDetail() {
                     <div className={modalStyles.actions}>
                         <button type="button" className="btn btn-secondary" onClick={closeModal}>Cancel</button>
                         <button type="submit" className="btn btn-primary">{activeModal === 'editAchievement' ? 'Save Changes' : 'Add Achievement'}</button>
+                    </div>
+                </form>
+            </Modal>
+
+            {/* Add/Edit Decision Modal */}
+            <Modal
+                isOpen={activeModal === 'addDecision' || activeModal === 'editDecision'}
+                onClose={closeModal}
+                title={activeModal === 'editDecision' ? 'Edit Decision' : 'Add New Decision'}
+            >
+                <form onSubmit={handleSubmit}>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Title</label>
+                        <input
+                            type="text"
+                            name="title"
+                            value={formData.title || ''}
+                            onChange={handleInputChange}
+                            className={modalStyles.input}
+                            required
+                        />
+                    </div>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Description</label>
+                        <textarea
+                            name="description"
+                            value={formData.description || ''}
+                            onChange={handleInputChange}
+                            className={modalStyles.textarea}
+                            required
+                        />
+                    </div>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Owner</label>
+                        <select
+                            name="owneremail"
+                            value={formData.owneremail || ''}
+                            onChange={handleInputChange}
+                            className={modalStyles.select}
+                            required
+                        >
+                            <option value="">Select Owner</option>
+                            {allUsers.map(user => (
+                                <option key={user.email} value={user.email}>
+                                    {user.firstname} {user.lastname}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Status</label>
+                        <select
+                            name="status"
+                            value={formData.status || 'To be decided'}
+                            onChange={handleInputChange}
+                            className={modalStyles.select}
+                        >
+                            <option value="To be decided">To be decided</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Importance</label>
+                        <select
+                            name="importance"
+                            value={formData.importance || 'Medium'}
+                            onChange={handleInputChange}
+                            className={modalStyles.select}
+                        >
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                    <div className={modalStyles.formGroup}>
+                        <label className={modalStyles.label}>Date</label>
+                        <input
+                            type="date"
+                            name="registedon"
+                            value={formData.registedon || ''}
+                            onChange={handleInputChange}
+                            className={modalStyles.input}
+                        />
+                    </div>
+                    <div className={modalStyles.actions}>
+                        <button type="button" className="btn btn-secondary" onClick={closeModal}>Cancel</button>
+                        <button type="submit" className="btn btn-primary">{activeModal === 'editDecision' ? 'Save Changes' : 'Add Decision'}</button>
                     </div>
                 </form>
             </Modal>

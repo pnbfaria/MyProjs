@@ -88,6 +88,18 @@ export interface Achievement {
     regulation?: string
 }
 
+export interface Decision {
+    decisionid: number
+    projectid: number
+    title: string
+    description: string
+    status: string
+    owneremail: string
+    createdbyemail: string
+    registedon: string
+    importance: string
+}
+
 export interface Registration {
     regid: number
     projectid: number
