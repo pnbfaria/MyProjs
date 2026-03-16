@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import React, { useState, useEffect, useMemo } from 'react';
+import { getResourceConsumptionMetadata, upsertTimesheet } from '@/app/actions/resourceActions';
 import { XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import styles from './ResourceConsumption.module.css';
 import { TimeSheet, Registration, Role, AppUser } from '@/types/database';
@@ -23,7 +23,6 @@ export default function ResourceConsumption({ projectId, initialTimeSheets, onDa
     const [viewMode, setViewMode] = useState<'global' | 'month' | 'soFar'>('global');
     const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1);
     const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-    const [usersData, setUsersData] = useState<UserData[]>([]);
     const [registrations, setRegistrations] = useState<Registration[]>([]);
     const [roles, setRoles] = useState<Role[]>([]);
     const [users, setUsers] = useState<AppUser[]>([]);
@@ -33,33 +32,23 @@ export default function ResourceConsumption({ projectId, initialTimeSheets, onDa
     const [editingEntry, setEditingEntry] = useState<any | null>(null);
 
     useEffect(() => {
+        const fetchMetadata = async () => {
+            try {
+                const data = await getResourceConsumptionMetadata(projectId);
+                setRegistrations(data.registrations);
+                setRoles(data.roles);
+                setUsers(data.users);
+            } catch (error) {
+                console.error("Error fetching metadata:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
         fetchMetadata();
     }, [projectId]);
 
-    useEffect(() => {
-        processData();
-    }, [initialTimeSheets, registrations, roles, users, viewMode, selectedMonth, selectedYear]);
-
-    const fetchMetadata = async () => {
-        try {
-            const [regRes, rolesRes, usersRes] = await Promise.all([
-                supabase.from('registration').select('*').eq('projectid', projectId),
-                supabase.from('role').select('*'),
-                supabase.from('appuser').select('*')
-            ]);
-
-            if (regRes.data) setRegistrations(regRes.data);
-            if (rolesRes.data) setRoles(rolesRes.data);
-            if (usersRes.data) setUsers(usersRes.data);
-        } catch (error) {
-            console.error("Error fetching metadata:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const processData = () => {
-        if (loading) return;
+    const usersData = useMemo(() => {
+        if (loading) return [];
 
         // 1. Filter timesheets based on view mode
         const filteredTimeSheets = initialTimeSheets.filter(ts => {
@@ -89,13 +78,14 @@ export default function ResourceConsumption({ projectId, initialTimeSheets, onDa
         const data: UserData[] = [];
 
         relevantEmails.forEach(email => {
-            const user = users.find(u => u.email === email);
-            const registration = registrations.find(r => r.email === email);
+            const normalizedEmail = email.toLowerCase().trim();
+            const user = users.find(u => u.email.toLowerCase().trim() === normalizedEmail);
+            const registration = registrations.find(r => r.email.toLowerCase().trim() === normalizedEmail);
 
             // Deduce role: First check registration, then fallback to any timesheet for this user
             let roleId = registration?.roleid;
             if (!roleId) {
-                const tsWithRole = initialTimeSheets.find(ts => ts.useremail === email && ts.roleid);
+                const tsWithRole = initialTimeSheets.find(ts => ts.useremail?.toLowerCase().trim() === normalizedEmail && ts.roleid);
                 if (tsWithRole) roleId = tsWithRole.roleid;
             }
 
@@ -104,20 +94,20 @@ export default function ResourceConsumption({ projectId, initialTimeSheets, onDa
             // Get timesheets for this user (filtered by time view already)
             const userTimesheets = filteredTimeSheets.filter(ts => ts.useremail === email);
 
-            const totalWorkload = userTimesheets.reduce((sum, ts) => sum + (ts.workload || 0), 0);
-            const totalEstWorkload = userTimesheets.reduce((sum, ts) => sum + (ts.estworkload || 0), 0);
+            const totalWorkload = userTimesheets.reduce((sum, ts) => sum + (Number(ts.workload) || 0), 0);
+            const totalEstWorkload = userTimesheets.reduce((sum, ts) => sum + (Number(ts.estworkload) || 0), 0);
 
             data.push({
                 email: email,
                 name: user ? `${user.firstname} ${user.lastname}` : email,
                 role: role ? role.name : 'Unknown', // Using name as role name
-                workload: totalWorkload,
-                estworkload: totalEstWorkload
+                workload: Number(totalWorkload.toFixed(2)),
+                estworkload: Number(totalEstWorkload.toFixed(2))
             });
         });
 
-        setUsersData(data);
-    };
+        return data;
+    }, [loading, initialTimeSheets, registrations, roles, users, viewMode, selectedMonth, selectedYear]);
 
 
 
@@ -141,22 +131,19 @@ export default function ResourceConsumption({ projectId, initialTimeSheets, onDa
         }
 
         try {
-            const { error } = await supabase
-                .from('timesheet')
-                .upsert({
-                    projectid: projectId,
-                    useremail: data.email,
-                    month: targetMonth,
-                    year: targetYear,
-                    workload: parseFloat(data.workload),
-                    estworkload: parseFloat(data.estworkload),
-                    createdat: new Date().toISOString(),
-                    // Default values for required legacy columns if they don't exist
-                    externaldevcount: 0,
-                    brandeddevyearscount: 0
-                }, { onConflict: 'useremail, projectid, month, year' });
+            await upsertTimesheet({
+                projectid: projectId,
+                useremail: data.email,
+                month: targetMonth,
+                year: targetYear,
+                workload: parseFloat(data.workload),
+                estworkload: parseFloat(data.estworkload),
+                createdat: new Date().toISOString(),
+                externaldevcount: 0,
+                brandeddevyearscount: 0,
+                roleid: undefined // Fixes type issue where TS expects number or undefined, not null
+            });
 
-            if (error) throw error;
             setEditingEntry(null);
             onDataUpdate();
         } catch (e) {
@@ -249,7 +236,7 @@ export default function ResourceConsumption({ projectId, initialTimeSheets, onDa
                                 <td>
                                     <div className={styles.userInfo}>
                                         <div className={styles.userName}>{user.name}</div>
-                                        <div className={styles.userEmail}>{user.email}</div>
+                                        {/* <div className={styles.userEmail}>{user.email}</div> */}
                                     </div>
                                 </td>
                                 <td><span className="badge badge-secondary">{user.role}</span></td>

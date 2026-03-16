@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { getUsers, createUser, deleteUser, updateUser } from '@/app/actions/userActions'
 import { AppUser } from '@/types/database'
 import styles from './page.module.css'
 
@@ -14,6 +14,13 @@ export default function UsersBackoffice() {
         firstname: '',
         lastname: '',
     })
+    const [editingUser, setEditingUser] = useState<AppUser | null>(null)
+    const [editFormData, setEditFormData] = useState({
+        email: '',
+        firstname: '',
+        lastname: '',
+        isactive: true
+    })
 
     useEffect(() => {
         fetchUsers()
@@ -21,12 +28,7 @@ export default function UsersBackoffice() {
 
     async function fetchUsers() {
         try {
-            const { data, error } = await supabase
-                .from('appuser')
-                .select('*')
-                .order('joinedat', { ascending: false })
-
-            if (error) throw error
+            const data = await getUsers()
             setUsers(data || [])
         } catch (error) {
             console.error('Error fetching users:', error)
@@ -38,15 +40,7 @@ export default function UsersBackoffice() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault()
         try {
-            const { error } = await supabase
-                .from('appuser')
-                .insert([{
-                    ...formData,
-                    joinedat: new Date().toISOString(),
-                    isactive: true,
-                }])
-
-            if (error) throw error
+            await createUser(formData)
 
             setFormData({ email: '', firstname: '', lastname: '' })
             setShowForm(false)
@@ -61,16 +55,35 @@ export default function UsersBackoffice() {
         if (!confirm('Are you sure you want to delete this user?')) return
 
         try {
-            const { error } = await supabase
-                .from('appuser')
-                .delete()
-                .eq('email', email)
-
-            if (error) throw error
+            await deleteUser(email)
             fetchUsers()
         } catch (error) {
             console.error('Error deleting user:', error)
             alert('Error deleting user.')
+        }
+    }
+
+    function openEditModal(user: AppUser) {
+        setEditingUser(user)
+        setEditFormData({
+            email: user.email,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            isactive: user.isactive ?? true
+        })
+    }
+
+    async function handleUpdate(e: React.FormEvent) {
+        e.preventDefault()
+        if (!editingUser) return
+
+        try {
+            await updateUser(editingUser.email, editFormData)
+            setEditingUser(null)
+            fetchUsers()
+        } catch (error) {
+            console.error('Error updating user:', error)
+            alert('Error updating user. Please check if the new email is already in use.')
         }
     }
 
@@ -172,6 +185,13 @@ export default function UsersBackoffice() {
                                     <td>{new Date(user.joinedat).toLocaleDateString()}</td>
                                     <td>
                                         <button
+                                            className="btn btn-secondary"
+                                            style={{ padding: '0.375rem 0.75rem', fontSize: '0.8125rem', marginRight: '5px' }}
+                                            onClick={() => openEditModal(user)}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
                                             className="btn btn-danger"
                                             style={{ padding: '0.375rem 0.75rem', fontSize: '0.8125rem' }}
                                             onClick={() => handleDelete(user.email)}
@@ -185,6 +205,62 @@ export default function UsersBackoffice() {
                     </table>
                 )}
             </div>
+
+            {editingUser && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modal}>
+                        <div className={styles.modalHeader}>
+                            <h3>Edit User</h3>
+                            <button className={styles.closeBtn} onClick={() => setEditingUser(null)}>✕</button>
+                        </div>
+                        <form onSubmit={handleUpdate} className={styles.form} style={{ padding: '20px' }}>
+                            <div className="form-group">
+                                <label className="label">Email *</label>
+                                <input
+                                    type="email"
+                                    className="input"
+                                    required
+                                    value={editFormData.email}
+                                    onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="label">First Name *</label>
+                                <input
+                                    type="text"
+                                    className="input"
+                                    required
+                                    value={editFormData.firstname}
+                                    onChange={(e) => setEditFormData({ ...editFormData, firstname: e.target.value })}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label className="label">Last Name *</label>
+                                <input
+                                    type="text"
+                                    className="input"
+                                    required
+                                    value={editFormData.lastname}
+                                    onChange={(e) => setEditFormData({ ...editFormData, lastname: e.target.value })}
+                                />
+                            </div>
+                            <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <input
+                                    type="checkbox"
+                                    id="isactive"
+                                    checked={editFormData.isactive}
+                                    onChange={(e) => setEditFormData({ ...editFormData, isactive: e.target.checked })}
+                                />
+                                <label htmlFor="isactive" className="label" style={{ marginBottom: 0 }}>Active Account</label>
+                            </div>
+                            <div className={styles.modalActions}>
+                                <button type="button" className="btn btn-secondary" onClick={() => setEditingUser(null)}>Cancel</button>
+                                <button type="submit" className="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

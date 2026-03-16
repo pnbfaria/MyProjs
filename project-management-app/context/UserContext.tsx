@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { getActiveUsers } from '@/app/actions/userActions'
 import { AppUser } from '@/types/database'
 
 interface UserContextType {
@@ -42,13 +42,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
     async function fetchUsers() {
         try {
-            const { data, error } = await supabase
-                .from('appuser')
-                .select('*')
-                .eq('isactive', true)
-                .order('firstname')
-
-            if (error) throw error
+            const data = await getActiveUsers()
             setAllUsers(data || [])
 
             // If no user selected and we have users, select the first one by default
