@@ -1,0 +1,111 @@
+
+> shd.web@0.0.0 start
+> ng serve
+
+Node.js version v25.2.1 detected.
+Odd numbered Node.js versions will not enter LTS status and should not be used for production. For more information, please see https://nodejs.org/en/about/previous-releases/.
+[33mΓ¥»[39m Building...
+[32mΓ£ö[39m Building...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m                       [2m | [22m [1mRaw size[22m
+[32mpolyfills.js[39m       [2m | [22m[2mpolyfills[22m                   [2m | [22m [36m90.20 kB[39m[2m | [22m
+[32mmain.js[39m            [2m | [22m[2mmain[22m                        [2m | [22m [36m22.30 kB[39m[2m | [22m
+[32mstyles.css[39m         [2m | [22m[2mstyles[22m                      [2m | [22m  [36m2.36 kB[39m[2m | [22m
+
+[1m [22m                  [2m | [22m[1mInitial total[22m               [2m | [22m[1m114.86 kB[22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m                       [2m | [22m [1mRaw size[22m
+[32mchunk-UJUP6HQV.js[39m  [2m | [22m[2mfeedback-list-component[22m     [2m | [22m [36m35.65 kB[39m[2m | [22m
+[32mchunk-OQXQPMHX.js[39m  [2m | [22m[2mfeedback-detail-component[22m   [2m | [22m [36m20.71 kB[39m[2m | [22m
+[32mchunk-WUJAY5X2.js[39m  [2m | [22m[2mclient-list-component[22m       [2m | [22m  [36m5.78 kB[39m[2m | [22m
+[32mchunk-UPZPON3V.js[39m  [2m | [22m[2mreporting-component[22m         [2m | [22m  [36m5.73 kB[39m[2m | [22m
+[32mchunk-YDQZYRBV.js[39m  [2m | [22m[2mcollaborateur-list-component[22m[2m | [22m  [36m4.18 kB[39m[2m | [22m
+[32mchunk-S52HZUPB.js[39m  [2m | [22m[2m-[22m                           [2m | [22m  [36m1.54 kB[39m[2m | [22m
+
+Application bundle generation complete. [1.901 seconds]
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+  [32mΓ₧£[39m  [1mLocal[22m:   [36mhttp://localhost:[1m4200[22m/[39m
+[2m[32m  Γ₧£[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m
+[33mΓ¥»[39m Changes detected. Rebuilding...
+[32mΓ£ö[39m Changes detected. Rebuilding...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m [2m | [22m[1mRaw size[22m
+[32mstyles.css[39m         [2m | [22m[2mstyles[22m[2m | [22m [36m7.00 kB[39m[2m | [22m
+
+Application bundle generation complete. [0.542 seconds]
+
+HMR update sent to client(s).
+[33mΓ¥»[39m Changes detected. Rebuilding...
+[32mΓ£ö[39m Changes detected. Rebuilding...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m[2m | [22m[1mRaw size[22m
+[32mmain.js[39m            [2m | [22m[2mmain[22m [2m | [22m[36m25.05 kB[39m[2m | [22m
+
+Application bundle generation complete. [0.132 seconds]
+
+Page reload sent to client(s).
+[33mΓ¥»[39m Changes detected. Rebuilding...
+[32mΓ£ö[39m Changes detected. Rebuilding...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m                  [2m | [22m[1mRaw size[22m
+[32mmain.js[39m            [2m | [22m[2mmain[22m                   [2m | [22m[36m25.05 kB[39m[2m | [22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m                  [2m | [22m[1mRaw size[22m
+[32mchunk-ILECKIZ6.js[39m  [2m | [22m[2mfeedback-list-component[22m[2m | [22m[36m40.33 kB[39m[2m | [22m
+
+Application bundle generation complete. [0.403 seconds]
+
+Page reload sent to client(s).
+[33mΓ¥»[39m Changes detected. Rebuilding...
+[32mΓ£ö[39m Changes detected. Rebuilding...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m                    [2m | [22m[1mRaw size[22m
+[32mmain.js[39m            [2m | [22m[2mmain[22m                     [2m | [22m[36m25.05 kB[39m[2m | [22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m                    [2m | [22m[1mRaw size[22m
+[32mchunk-AXJ5PTCA.js[39m  [2m | [22m[2mfeedback-detail-component[22m[2m | [22m[36m18.13 kB[39m[2m | [22m
+
+Application bundle generation complete. [0.255 seconds]
+
+Page reload sent to client(s).
+[33mΓ¥»[39m Changes detected. Rebuilding...
+[32mΓ£ö[39m Changes detected. Rebuilding...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m                  [2m | [22m[1mRaw size[22m
+[32mmain.js[39m            [2m | [22m[2mmain[22m                   [2m | [22m[36m25.05 kB[39m[2m | [22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m                  [2m | [22m[1mRaw size[22m
+[32mchunk-GJKUQQLT.js[39m  [2m | [22m[2mfeedback-list-component[22m[2m | [22m[36m44.91 kB[39m[2m | [22m
+
+Application bundle generation complete. [0.244 seconds]
+
+Page reload sent to client(s).
+[33mΓ¥»[39m Changes detected. Rebuilding...
+[32mΓ£ö[39m Changes detected. Rebuilding...
+Application bundle generation failed. [0.207 seconds]
+
+X [ERROR] NG9: Property 'createdAt' does not exist on type 'Client'. [plugin angular-compiler]
+
+    src/app/features/clients/client-list.component.ts:73:39:
+      73 Γöé ...<td class="date-range">{{c.createdAt | date:'dd/MM/yyyy'}} - {{...
+         Γò╡                               ~~~~~~~~~
+
+
+[33mΓ¥»[39m Changes detected. Rebuilding...
+[32mΓ£ö[39m Changes detected. Rebuilding...
+Application bundle generation failed. [0.269 seconds]
+
+X [ERROR] NG9: Property 'createdAt' does not exist on type 'Client'. [plugin angular-compiler]
+
+    src/app/features/clients/client-list.component.ts:73:39:
+      73 Γöé ...<td class="date-range">{{c.createdAt | date:'dd/MM/yyyy'}} - {{...
+         Γò╡                               ~~~~~~~~~
+
+
+[33mΓ¥»[39m Changes detected. Rebuilding...
+[32mΓ£ö[39m Changes detected. Rebuilding...
+Application bundle generation failed. [0.221 seconds]
+
+X [ERROR] NG9: Property 'createdAt' does not exist on type 'Client'. [plugin angular-compiler]
+
+    src/app/features/clients/client-list.component.ts:73:39:
+      73 Γöé ...<td class="date-range">{{c.createdAt | date:'dd/MM/yyyy'}} - {{...
+         Γò╡                               ~~~~~~~~~
+
+
