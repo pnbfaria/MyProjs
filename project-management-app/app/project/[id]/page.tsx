@@ -75,8 +75,8 @@ export default function ProjectDetail() {
                 description: project.description,
                 projectstatus: project.projectstatus,
                 percentcompleted: project.percentcompleted,
-                startdate: project.startdate,
-                enddate: project.enddate,
+                startdate: project.startdate ? new Date(project.startdate).toISOString().split('T')[0] : '',
+                enddate: project.enddate ? new Date(project.enddate).toISOString().split('T')[0] : '',
                 accountmanageremail: project.accountmanageremail,
                 deliverymanageremail: project.deliverymanageremail,
             })
@@ -128,7 +128,7 @@ export default function ProjectDetail() {
                 deliverableid: data.deliverableid,
                 title: data.title,
                 description: data.description,
-                duedate: data.duedate?.split('T')[0] || '',
+                duedate: data.duedate ? new Date(data.duedate).toISOString().split('T')[0] : '',
                 status: data.status,
             })
         } else if (modalName === 'addAchievement') {
@@ -140,7 +140,7 @@ export default function ProjectDetail() {
                 achievementid: data.achievementid,
                 title: data.title,
                 description: data.description,
-                dateachieved: data.dateachieved?.split('T')[0] || '',
+                dateachieved: data.dateachieved ? new Date(data.dateachieved).toISOString().split('T')[0] : '',
             })
         } else if (modalName === 'addTimesheet') {
             setSelectedMonths([])
@@ -890,7 +890,7 @@ export default function ProjectDetail() {
                         <input
                             type="date"
                             name="startdate"
-                            value={formData.startdate?.split('T')[0] || ''}
+                            value={formData.startdate || ''}
                             onChange={handleInputChange}
                             className={modalStyles.input}
                         />
@@ -900,7 +900,7 @@ export default function ProjectDetail() {
                         <input
                             type="date"
                             name="enddate"
-                            value={formData.enddate?.split('T')[0] || ''}
+                            value={formData.enddate || ''}
                             onChange={handleInputChange}
                             className={modalStyles.input}
                         />
@@ -1447,7 +1447,18 @@ export default function ProjectDetail() {
                                 return (
                                     <tr key={ts.timesheetid}>
                                         <td>{ts.month}/{ts.year}</td>
-                                        <td>{role ? role.name : 'Unknown'}</td>
+                                        <td>
+                                            <select
+                                                value={ts.roleid}
+                                                onChange={(e) => handleTimesheetUpdate(ts.timesheetid, 'roleid', parseInt(e.target.value))}
+                                                className={modalStyles.select}
+                                                style={{ padding: '2px', fontSize: '0.9em', width: 'auto' }}
+                                            >
+                                                {roles.map(r => (
+                                                    <option key={r.roleid} value={r.roleid}>{r.name}</option>
+                                                ))}
+                                            </select>
+                                        </td>
                                         <td>
                                             <input
                                                 type="number"

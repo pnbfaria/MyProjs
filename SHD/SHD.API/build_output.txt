@@ -1,0 +1,34 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\ClientsController.cs(32,38): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\ClientsController.cs(32,70): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\UsersController.cs(31,38): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\UsersController.cs(31,70): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\DashboardController.cs(28,27): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\DashboardController.cs(34,27): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\DashboardController.cs(40,45): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\ReportingController.cs(28,27): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\ReportingController.cs(34,40): warning CS8629: Nullable value type may be null. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\FeedbacksController.cs(38,38): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\FeedbacksController.cs(43,38): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\FeedbacksController.cs(48,75): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+  SHD.API -> C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\bin\Debug\net10.0\SHD.API.dll
+
+Build succeeded.
+
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\ClientsController.cs(32,38): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\ClientsController.cs(32,70): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\UsersController.cs(31,38): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\UsersController.cs(31,70): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\DashboardController.cs(28,27): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\DashboardController.cs(34,27): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\DashboardController.cs(40,45): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\ReportingController.cs(28,27): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\ReportingController.cs(34,40): warning CS8629: Nullable value type may be null. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\FeedbacksController.cs(38,38): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\FeedbacksController.cs(43,38): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\Controllers\FeedbacksController.cs(48,75): warning CS8602: Dereference of a possibly null reference. [C:\Users\BRAZAOFARIAP\OneDrive - FUJITSU\Projects\MyProjs\SHD\SHD.API\SHD.API.csproj]
+    12 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.42
