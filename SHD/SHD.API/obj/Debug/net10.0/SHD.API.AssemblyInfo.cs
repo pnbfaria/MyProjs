@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SHD.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5a28a99ffe20d95c68b1ee0a7569fb8468f28dec")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+04204489a639aeeaeeae231bc6d7894c15673b8c")]
 [assembly: System.Reflection.AssemblyProductAttribute("SHD.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SHD.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
