@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import Header from '@/components/layout/Header';
 import {
   AlertTriangle,
@@ -11,32 +11,89 @@ import {
   AlertOctagon,
   Timer,
   Activity,
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
 } from 'lucide-react';
 import type { DashboardStats } from '@/lib/types';
 
+interface TicketWithSla {
+  jiraKey: string;
+  summary: string;
+  gravity: string;
+  client: string;
+  assignee: string;
+  sla: {
+    acknowledge: string;
+    response: string;
+    acknowledgePercent: number;
+    responsePercent: number;
+  };
+}
+
+function getQuarterOptions() {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentQuarter = Math.floor(now.getMonth() / 3) + 1;
+  const options: { quarter: number; year: number; label: string; isCurrent: boolean }[] = [];
+
+  // Generate 8 quarters: 4 back + current + 3 forward
+  for (let offset = -4; offset <= 3; offset++) {
+    let q = currentQuarter + offset;
+    let y = currentYear;
+    while (q < 1) { q += 4; y--; }
+    while (q > 4) { q -= 4; y++; }
+    options.push({
+      quarter: q,
+      year: y,
+      label: `Q${q} ${y}`,
+      isCurrent: q === currentQuarter && y === currentYear,
+    });
+  }
+
+  return options;
+}
+
 export default function DashboardPage() {
+  const quarterOptions = useMemo(() => getQuarterOptions(), []);
+
+  // Default to Q1 2026 (where data exists) — the user can switch to any quarter
+  const now = new Date();
+  const currentQuarter = Math.floor(now.getMonth() / 3) + 1;
+  const currentYear = now.getFullYear();
+
+  const [selectedQuarter, setSelectedQuarter] = useState(currentQuarter);
+  const [selectedYear, setSelectedYear] = useState(currentYear);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [tickets, setTickets] = useState<TicketWithSla[]>([]);
 
-  interface TicketWithSla {
-    jiraKey: string;
-    summary: string;
-    gravity: string;
-    client: string;
-    assignee: string;
-    sla: {
-      acknowledge: string;
-      response: string;
-      acknowledgePercent: number;
-      responsePercent: number;
-    };
-  }
+  const selectedIndex = quarterOptions.findIndex(
+    (o) => o.quarter === selectedQuarter && o.year === selectedYear
+  );
+  const isCurrentQuarter = selectedQuarter === currentQuarter && selectedYear === currentYear;
+
+  const goToPrev = () => {
+    if (selectedIndex > 0) {
+      const prev = quarterOptions[selectedIndex - 1];
+      setSelectedQuarter(prev.quarter);
+      setSelectedYear(prev.year);
+    }
+  };
+
+  const goToNext = () => {
+    if (selectedIndex < quarterOptions.length - 1) {
+      const next = quarterOptions[selectedIndex + 1];
+      setSelectedQuarter(next.quarter);
+      setSelectedYear(next.year);
+    }
+  };
 
   const fetchData = useCallback(async () => {
+    setLoading(true);
     try {
       const [statsRes, ticketsRes] = await Promise.all([
-        fetch('/api/dashboard/stats'),
+        fetch(`/api/dashboard/stats?quarter=${selectedQuarter}&year=${selectedYear}`),
         fetch('/api/jira/tickets?limit=5'),
       ]);
 
@@ -52,7 +109,7 @@ export default function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedQuarter, selectedYear]);
 
   useEffect(() => {
     fetchData();
@@ -60,7 +117,7 @@ export default function DashboardPage() {
     return () => clearInterval(interval);
   }, [fetchData]);
 
-  if (loading) {
+  if (loading && !stats) {
     return (
       <>
         <Header title="Dashboard" />
@@ -78,16 +135,110 @@ export default function DashboardPage() {
     <>
       <Header title="Dashboard" />
       <div className="app-content animate-fade-in">
-        {/* Page Header */}
-        <div className="page-header">
-          <h2 className="page-title">SLA Performance Overview</h2>
-          <p className="page-description">
-            Real-time monitoring for {stats?.trimester || 'current trimester'} — eSignature Incidents
-          </p>
+        {/* Page Header with Quarter Selector */}
+        <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 'var(--space-md)' }}>
+          <div>
+            <h2 className="page-title">SLA Performance Overview</h2>
+            <p className="page-description">
+              Real-time monitoring for {stats?.trimester || 'current trimester'} — eSignature Incidents
+            </p>
+          </div>
+
+          {/* Quarter Selector */}
+          <div className="quarter-selector" style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--space-xs)',
+            background: 'var(--bg-secondary)',
+            borderRadius: 'var(--radius-lg)',
+            padding: '4px',
+            border: '1px solid var(--border-color)',
+          }}>
+            <button
+              onClick={goToPrev}
+              disabled={selectedIndex <= 0}
+              className="btn btn--secondary btn--small"
+              style={{
+                padding: '6px',
+                borderRadius: 'var(--radius-md)',
+                minWidth: 'unset',
+                opacity: selectedIndex <= 0 ? 0.3 : 1,
+              }}
+              title="Previous quarter"
+            >
+              <ChevronLeft size={16} />
+            </button>
+
+            <select
+              value={`${selectedQuarter}-${selectedYear}`}
+              onChange={(e) => {
+                const [q, y] = e.target.value.split('-').map(Number);
+                setSelectedQuarter(q);
+                setSelectedYear(y);
+              }}
+              style={{
+                background: 'var(--bg-primary)',
+                border: '1px solid var(--border-color)',
+                borderRadius: 'var(--radius-md)',
+                padding: '6px 12px',
+                fontSize: 'var(--text-sm)',
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+                cursor: 'pointer',
+                minWidth: '110px',
+                textAlign: 'center',
+                appearance: 'none',
+                WebkitAppearance: 'none',
+              }}
+            >
+              {quarterOptions.map((opt) => (
+                <option key={`${opt.quarter}-${opt.year}`} value={`${opt.quarter}-${opt.year}`}>
+                  {opt.label}{opt.isCurrent ? ' (current)' : ''}
+                </option>
+              ))}
+            </select>
+
+            <button
+              onClick={goToNext}
+              disabled={selectedIndex >= quarterOptions.length - 1}
+              className="btn btn--secondary btn--small"
+              style={{
+                padding: '6px',
+                borderRadius: 'var(--radius-md)',
+                minWidth: 'unset',
+                opacity: selectedIndex >= quarterOptions.length - 1 ? 0.3 : 1,
+              }}
+              title="Next quarter"
+            >
+              <ChevronRight size={16} />
+            </button>
+
+            {!isCurrentQuarter && (
+              <button
+                onClick={() => {
+                  setSelectedQuarter(currentQuarter);
+                  setSelectedYear(currentYear);
+                }}
+                className="btn btn--secondary btn--small"
+                style={{
+                  padding: '6px 10px',
+                  borderRadius: 'var(--radius-md)',
+                  fontSize: 'var(--text-xs)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+                title="Go to current quarter"
+              >
+                <Calendar size={12} />
+                Today
+              </button>
+            )}
+          </div>
         </div>
 
         {/* KPI Grid */}
-        <div className="kpi-grid">
+        <div className="kpi-grid" style={{ opacity: loading ? 0.6 : 1, transition: 'opacity 0.2s ease' }}>
           {/* Compliance Rate */}
           <div className="card kpi-card kpi-card--success">
             <div className="card-header">

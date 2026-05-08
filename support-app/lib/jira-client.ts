@@ -1,3 +1,6 @@
+// Bypass corporate proxy SSL certificate validation
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 import { PRIORITY_TO_GRAVITY } from './constants';
 import type { SlaGravity } from './types';
 

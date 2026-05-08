@@ -38,15 +38,14 @@ export default function Sidebar() {
         flexDirection: 'column',
         alignItems: 'center',
         textAlign: 'center',
-        padding: 'var(--space-md) var(--space-sm)',
-        marginBottom: 'var(--space-xl)'
+        padding: 'var(--space-lg) var(--space-sm) var(--space-md)',
+        marginBottom: 'var(--space-lg)',
+        gap: '8px',
       }}>
-        <div className="sidebar-logo-icon" style={{ 
-          background: 'transparent', 
+        <div style={{ 
           width: '100%', 
           display: 'flex', 
           justifyContent: 'center',
-          marginBottom: '8px'
         }}>
           <img 
             src="/fujitsu-logo.png" 
@@ -54,20 +53,16 @@ export default function Sidebar() {
             style={{ 
               width: '140px', 
               height: 'auto', 
-              objectFit: 'contain'
+              objectFit: 'contain',
             }} 
           />
         </div>
         <div style={{
-          fontSize: '12px',
+          fontSize: '11px',
           fontWeight: 700,
-          color: 'white',
-          letterSpacing: '0.15em',
+          color: 'rgba(255, 255, 255, 0.85)',
+          letterSpacing: '0.18em',
           textTransform: 'uppercase',
-          paddingTop: '4px',
-          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-          width: '80%',
-          marginTop: '4px'
         }}>
           Support <span style={{ color: 'var(--color-accent)' }}>Hub</span>
         </div>

@@ -199,20 +199,22 @@ export function getRemainingBusinessMs(now: Date, deadline: Date): number {
 
 // ── Trimester Utilities ──
 
-export function getCurrentTrimester(): { start: Date; end: Date; label: string } {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth(); // 0-based
-  const quarter = Math.floor(month / 3);
-
-  const start = new Date(year, quarter * 3, 1);
-  const end = new Date(year, (quarter + 1) * 3, 0, 23, 59, 59, 999);
+export function getTrimesterForQuarter(quarter: number, year: number): { start: Date; end: Date; label: string } {
+  const q = quarter - 1; // Convert 1-based to 0-based
+  const start = new Date(year, q * 3, 1);
+  const end = new Date(year, (q + 1) * 3, 0, 23, 59, 59, 999);
 
   return {
     start,
     end,
-    label: `Q${quarter + 1} ${year}`,
+    label: `Q${quarter} ${year}`,
   };
+}
+
+export function getCurrentTrimester(): { start: Date; end: Date; label: string } {
+  const now = new Date();
+  const quarter = Math.floor(now.getMonth() / 3) + 1;
+  return getTrimesterForQuarter(quarter, now.getFullYear());
 }
 
 export function getMonthRange(year: number, month: number): { start: Date; end: Date } {

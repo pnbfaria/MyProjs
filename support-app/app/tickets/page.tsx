@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import Header from '@/components/layout/Header';
-import { Search, Filter, Users, ExternalLink } from 'lucide-react';
+import { Search, Users, ExternalLink, X, SlidersHorizontal, RotateCcw } from 'lucide-react';
 
 interface TicketWithSla {
   id: string;
@@ -27,6 +27,13 @@ interface TicketWithSla {
   };
 }
 
+interface ActiveFilter {
+  key: string;
+  label: string;
+  value: string;
+  displayValue: string;
+}
+
 export default function TicketsPage() {
   const [tickets, setTickets] = useState<TicketWithSla[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +43,9 @@ export default function TicketsPage() {
   const [clientFilter, setClientFilter] = useState('all');
   const [gravityFilter, setGravityFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [slaFilter, setSlaFilter] = useState('all');
   const [clients, setClients] = useState<string[]>([]);
+  const [allClients, setAllClients] = useState<string[]>([]);
 
   const fetchTickets = useCallback(async () => {
     setLoading(true);
@@ -49,6 +58,7 @@ export default function TicketsPage() {
       if (clientFilter !== 'all') params.set('client', clientFilter);
       if (gravityFilter !== 'all') params.set('gravity', gravityFilter);
       if (statusFilter !== 'all') params.set('status', statusFilter);
+      if (slaFilter !== 'all') params.set('sla', slaFilter);
 
       const res = await fetch(`/api/jira/tickets?${params}`);
       if (res.ok) {
@@ -56,20 +66,62 @@ export default function TicketsPage() {
         setTickets(data.data || []);
         setTotal(data.total || 0);
 
-        // Extract unique clients
+        // Extract unique clients from results
         const uniqueClients = [...new Set(data.data?.map((t: TicketWithSla) => t.client).filter(Boolean))] as string[];
         if (uniqueClients.length > 0) setClients(uniqueClients);
+
+        // Keep a master list of clients (only update when no client filter active)
+        if (clientFilter === 'all' && uniqueClients.length > 0) {
+          setAllClients((prev) => {
+            const merged = [...new Set([...prev, ...uniqueClients])].sort();
+            return merged;
+          });
+        }
       }
     } catch {
       /* Handle error */
     } finally {
       setLoading(false);
     }
-  }, [page, search, clientFilter, gravityFilter, statusFilter]);
+  }, [page, search, clientFilter, gravityFilter, statusFilter, slaFilter]);
 
   useEffect(() => {
     fetchTickets();
   }, [fetchTickets]);
+
+  // Compute active filters list
+  const activeFilters = useMemo<ActiveFilter[]>(() => {
+    const filters: ActiveFilter[] = [];
+    if (clientFilter !== 'all') filters.push({ key: 'client', label: 'Client', value: clientFilter, displayValue: clientFilter });
+    if (gravityFilter !== 'all') filters.push({ key: 'gravity', label: 'Gravity', value: gravityFilter, displayValue: gravityFilter });
+    if (statusFilter !== 'all') filters.push({ key: 'status', label: 'Status', value: statusFilter, displayValue: statusFilter });
+    if (slaFilter !== 'all') {
+      const slaLabels: Record<string, string> = { 'on-track': 'On Track', 'at-risk': 'At Risk', 'breached': 'Breached' };
+      filters.push({ key: 'sla', label: 'SLA', value: slaFilter, displayValue: slaLabels[slaFilter] || slaFilter });
+    }
+    if (search.trim()) filters.push({ key: 'search', label: 'Search', value: search, displayValue: `"${search}"` });
+    return filters;
+  }, [clientFilter, gravityFilter, statusFilter, slaFilter, search]);
+
+  const removeFilter = (key: string) => {
+    switch (key) {
+      case 'client': setClientFilter('all'); break;
+      case 'gravity': setGravityFilter('all'); break;
+      case 'status': setStatusFilter('all'); break;
+      case 'sla': setSlaFilter('all'); break;
+      case 'search': setSearch(''); break;
+    }
+    setPage(1);
+  };
+
+  const clearAllFilters = () => {
+    setSearch('');
+    setClientFilter('all');
+    setGravityFilter('all');
+    setStatusFilter('all');
+    setSlaFilter('all');
+    setPage(1);
+  };
 
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return '—';
@@ -78,6 +130,21 @@ export default function TicketsPage() {
       hour: '2-digit', minute: '2-digit',
     });
   };
+
+  // Apply client-side SLA filtering
+  const displayTickets = useMemo(() => {
+    if (slaFilter === 'all') return tickets;
+    return tickets.filter((t) => {
+      const ackStatus = t.sla?.acknowledge;
+      const resStatus = t.sla?.response;
+      if (slaFilter === 'breached') return ackStatus === 'breached' || resStatus === 'breached';
+      if (slaFilter === 'at-risk') return ackStatus === 'at-risk' || resStatus === 'at-risk';
+      if (slaFilter === 'on-track') return ackStatus === 'on-track' && resStatus === 'on-track';
+      return true;
+    });
+  }, [tickets, slaFilter]);
+
+  const clientOptions = allClients.length > 0 ? allClients : clients;
 
   return (
     <>
@@ -92,54 +159,116 @@ export default function TicketsPage() {
 
         {/* Filters */}
         <div className="filters-bar">
-          <div style={{ position: 'relative', flex: '1', maxWidth: '320px' }}>
-            <Search size={16} style={{
-              position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)',
-              color: 'var(--color-text-muted)',
-            }} />
-            <input
-              type="text"
-              className="input"
-              placeholder="Search tickets..."
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              style={{ paddingLeft: '36px' }}
-            />
+          {/* Row 1: Search + Dropdowns */}
+          <div className="filters-row">
+            {/* Search */}
+            <div className="filter-search-wrapper">
+              <Search size={16} className="filter-search-icon" />
+              <input
+                type="text"
+                className="filter-search-input"
+                placeholder="Search by key, summary, or description..."
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              />
+            </div>
+
+            <div className="filter-divider" />
+
+            {/* Client Filter */}
+            <div className="filter-group">
+              <span className="filter-group-label">Client</span>
+              <select
+                className={`filter-select${clientFilter !== 'all' ? ' active' : ''}`}
+                value={clientFilter}
+                onChange={(e) => { setClientFilter(e.target.value); setPage(1); }}
+              >
+                <option value="all">All Clients</option>
+                {clientOptions.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Gravity Filter */}
+            <div className="filter-group">
+              <span className="filter-group-label">Gravity</span>
+              <select
+                className={`filter-select${gravityFilter !== 'all' ? ' active' : ''}`}
+                value={gravityFilter}
+                onChange={(e) => { setGravityFilter(e.target.value); setPage(1); }}
+              >
+                <option value="all">All Gravities</option>
+                <option value="Majeur">🔴 Majeur</option>
+                <option value="Significatif">🟡 Significatif</option>
+                <option value="Mineur">🔵 Mineur</option>
+              </select>
+            </div>
+
+            {/* Status Filter */}
+            <div className="filter-group">
+              <span className="filter-group-label">Status</span>
+              <select
+                className={`filter-select${statusFilter !== 'all' ? ' active' : ''}`}
+                value={statusFilter}
+                onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+              >
+                <option value="all">All Statuses</option>
+                <option value="Open">Open</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Closed">Closed</option>
+              </select>
+            </div>
+
+            {/* SLA Filter */}
+            <div className="filter-group">
+              <span className="filter-group-label">SLA Status</span>
+              <select
+                className={`filter-select${slaFilter !== 'all' ? ' active' : ''}`}
+                value={slaFilter}
+                onChange={(e) => { setSlaFilter(e.target.value); setPage(1); }}
+              >
+                <option value="all">All SLA</option>
+                <option value="on-track">✅ On Track</option>
+                <option value="at-risk">⚠️ At Risk</option>
+                <option value="breached">🚨 Breached</option>
+              </select>
+            </div>
+
+            {/* Results count */}
+            <div className="filter-results-summary">
+              <SlidersHorizontal size={14} style={{ marginRight: '6px', opacity: 0.5 }} />
+              {loading ? 'Loading...' : `${total} result${total !== 1 ? 's' : ''}`}
+              {activeFilters.length > 0 && (
+                <span className="filter-count">{activeFilters.length}</span>
+              )}
+            </div>
           </div>
 
-          <select
-            className="select"
-            value={clientFilter}
-            onChange={(e) => { setClientFilter(e.target.value); setPage(1); }}
-          >
-            <option value="all">All Clients</option>
-            {clients.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-
-          <select
-            className="select"
-            value={gravityFilter}
-            onChange={(e) => { setGravityFilter(e.target.value); setPage(1); }}
-          >
-            <option value="all">All Gravities</option>
-            <option value="Majeur">Majeur</option>
-            <option value="Significatif">Significatif</option>
-            <option value="Mineur">Mineur</option>
-          </select>
-
-          <select
-            className="select"
-            value={statusFilter}
-            onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-          >
-            <option value="all">All Statuses</option>
-            <option value="Open">Open</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Resolved">Resolved</option>
-            <option value="Closed">Closed</option>
-          </select>
+          {/* Row 2: Active Filter Pills */}
+          {activeFilters.length > 0 && (
+            <div className="active-filters">
+              <span className="active-filters-label">Active Filters</span>
+              {activeFilters.map((f) => (
+                <span key={f.key} className="filter-pill">
+                  <span className="filter-pill-category">{f.label}:</span>
+                  <span className="filter-pill-value">{f.displayValue}</span>
+                  <button
+                    className="filter-pill-dismiss"
+                    onClick={() => removeFilter(f.key)}
+                    title={`Remove ${f.label} filter`}
+                  >
+                    <X size={12} />
+                  </button>
+                </span>
+              ))}
+              <button className="filter-clear-all" onClick={clearAllFilters}>
+                <RotateCcw size={12} />
+                Clear all
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Tickets Table */}
@@ -165,14 +294,14 @@ export default function TicketsPage() {
                     Loading tickets...
                   </td>
                 </tr>
-              ) : tickets.length === 0 ? (
+              ) : displayTickets.length === 0 ? (
                 <tr>
                   <td colSpan={9} style={{ textAlign: 'center', padding: 'var(--space-xl)', color: 'var(--color-text-tertiary)' }}>
                     No tickets found. Try adjusting your filters or sync with Jira.
                   </td>
                 </tr>
               ) : (
-                tickets.map((ticket) => (
+                displayTickets.map((ticket) => (
                   <tr key={ticket.id}>
                     <td>
                       <a 
@@ -297,3 +426,4 @@ export default function TicketsPage() {
     </>
   );
 }
+

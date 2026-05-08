@@ -1,17 +1,24 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { evaluateSlaStatus } from '@/lib/sla-engine';
-import { getCurrentTrimester } from '@/lib/business-time';
+import { getCurrentTrimester, getTrimesterForQuarter } from '@/lib/business-time';
 import { TRIMESTER_LIMITS } from '@/lib/constants';
 import type { SlaGravity } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const trimester = getCurrentTrimester();
+    const { searchParams } = new URL(request.url);
+    const quarterParam = searchParams.get('quarter');
+    const yearParam = searchParams.get('year');
 
-    // Get all tickets in the current trimester
+    // Use provided quarter/year or fall back to current trimester
+    const trimester = (quarterParam && yearParam)
+      ? getTrimesterForQuarter(parseInt(quarterParam), parseInt(yearParam))
+      : getCurrentTrimester();
+
+    // Get all tickets in the selected trimester
     const tickets = await prisma.ticket.findMany({
       where: {
         requestedDate: {

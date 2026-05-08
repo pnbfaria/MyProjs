@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -H 0.0.0.0",
-    "build": "next build",
-    "start": "next start -H 0.0.0.0",
-    "share": "next build && next start -H 0.0.0.0 -p 4205",
+    "dev": "set NODE_TLS_REJECT_UNAUTHORIZED=0 && next dev -H 0.0.0.0",
+    "build": "set NODE_TLS_REJECT_UNAUTHORIZED=0 && next build",
+    "start": "set NODE_TLS_REJECT_UNAUTHORIZED=0 && next start -H 0.0.0.0",
+    "share": "set NODE_TLS_REJECT_UNAUTHORIZED=0 && next build && next start -H 0.0.0.0 -p 4205",
     "lint": "eslint",
     "test:e2e": "playwright test",
     "test:ui": "playwright test --ui"
