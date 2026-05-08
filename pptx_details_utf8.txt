@@ -1,0 +1,1058 @@
+﻿Slide dimensions: 9144000x5143500 EMUs (10.00x5.62 inches)
+Number of slides: 18
+
+Layout: 1_Cover slide
+Layout: 2_Cover slide
+Layout: 3_Cover slide
+Layout: 4_Cover slide
+Layout: 5_Cover slide
+Layout: 6_Cover slide
+Layout: 7_Cover slide
+Layout: 1_Section divider
+Layout: 2_Section divider
+Layout: 3_Section divider
+Layout: 4_Section divider
+Layout: 5_Section divider
+Layout: 6_Section divider
+Layout: 7_Section divider
+Layout: 8_Section divider
+Layout: 9_Section divider
+Layout: 10_Section divider
+Layout: 11_Section divider
+Layout: Bullets 1-col
+Layout: Bullets 2-col
+Layout: Text 1-col
+Layout: Text 2-col
+Layout: Agenda slide
+Layout: 1_Title only
+Layout: 2_Title only
+Layout: 3_Title only
+Layout: 4_Title only
+Layout: 1_Close
+Layout: 2_Close
+
+=== SLIDE 1 ===
+Layout: 4_Section divider
+  Shape: type=PLACEHOLDER (14), Name="Title 2"
+    Pos: left=113454, top=3295346, w=4458546, h=523220
+    Text: "EIBG GitHub Copilot Phase II"
+  Shape: type=PLACEHOLDER (14), Name="Text Placeholder 1"
+    Pos: left=161945, top=3818566, w=4022128, h=630942
+    Text: "FujitsuΓÇÖs support\n"
+      P0 Run: [FujitsuΓÇÖs support] => color=#FF0000, bold
+
+=== SLIDE 2 ===
+Layout: 6_First page presentation
+  Shape: type=PLACEHOLDER (14), Name="Title 15"
+    Pos: left=628650, top=63226, w=7007469, h=658972
+    Text: "Agenda"
+  Shape: type=PLACEHOLDER (14), Name="Text Placeholder 16"
+    Pos: left=711546, top=1418803, w=663179, h=507831
+    Text: "1"
+  Shape: type=PLACEHOLDER (14), Name="Text Placeholder 17"
+    Pos: left=711546, top=2067198, w=1454944, h=230832
+    Text: "Context"
+  Shape: type=PLACEHOLDER (14), Name="Text Placeholder 18"
+    Pos: left=2645121, top=1418803, w=663179, h=507831
+    Text: "2"
+  Shape: type=PLACEHOLDER (14), Name="Text Placeholder 19"
+    Pos: left=2644651, top=2067198, w=1454944, h=230832
+    Text: "GitHub Copilot"
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 18"
+    Pos: left=4604170, top=1418802, w=663179, h=588169
+    Text: "3"
+      P0 Run: [3] => size=33.0pt
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 19"
+    Pos: left=4603700, top=2067198, w=1454944, h=588169
+    Text: "Support"
+      P0 Run: [Support] => size=15.0pt
+  Shape: type=AUTO_SHAPE (1), Name="Rectangle 13"
+    Pos: left=4419600, top=823913, w=2014538, h=4067175
+      P0 align=CENTER (2)
+  Shape: type=PICTURE (13), Name="Picture 2"
+    Pos: left=6444276, top=2297345, w=1400388, h=1120310
+    Image saved: slide2_img1.png (image/png)
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 16"
+    Pos: left=711546, top=3358439, w=663179, h=507831
+    Text: "3"
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 17"
+    Pos: left=711546, top=4006834, w=1454944, h=461665
+    Text: "Agentic Workflow"
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 16"
+    Pos: left=2804654, top=3358439, w=663179, h=507831
+    Text: "4"
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 17"
+    Pos: left=2804654, top=4006834, w=1454944, h=692497
+    Text: "EIBG Agentic Workflow Adoption"
+
+=== SLIDE 3 ===
+Layout: 1_Section divider
+  Shape: type=PLACEHOLDER (14), Name="πé┐πéñπâêπâ½ 3"
+    Pos: left=252000, top=2159847, w=6157292, h=523220
+    Text: "Context"
+  Shape: type=PLACEHOLDER (14), Name="σ¡ùσ╣ò 4"
+    Pos: left=252000, top=2876457, w=6141390, h=276999
+    Text: "EIBG - GitHub Copilot (Phase II)"
+      P0 Run: [EIBG - GitHub Copilot (Phase II)] => bold
+
+=== SLIDE 4 ===
+Layout: Bullets 2-col
+  Shape: type=PLACEHOLDER (14), Name="Title 1"
+    Pos: left=252000, top=151256, w=7590845, h=430887
+    Text: "Meeting Objective"
+  Shape: type=PLACEHOLDER (14), Name="Text Placeholder 2"
+    Pos: left=252000, top=920750, w=8566418, h=1107996
+    Text: "Fujitsu is currently supporting EIBG on the GitHub Copilot journey.\n\nEIBG - GitHub Copilot (Phase II) intends to ensure a smooth and effective adoption of the platform by EIBG users.\n\nAs part of the initiative, we will be applying GitHub Copilot capabilities to specific use cases so that EIBG teams "
+      P0 align=JUSTIFY (4)
+      P0 Run: [Fujitsu is currently supporting ] => size=12.0pt
+      P0 Run: [EIBG on the GitHub Copilot journey] => size=12.0pt, bold
+      P0 Run: [.] => size=12.0pt
+      P1 align=JUSTIFY (4)
+      P2 align=JUSTIFY (4)
+      P2 Run: [EIBG - GitHub Copilot (Phase II) ] => size=12.0pt, bold
+      P2 Run: [intends to ensure a ] => size=12.0pt
+      P2 Run: [smooth and effective adoption ] => size=12.0pt, bold
+      P2 Run: [of the platform by EIBG users.] => size=12.0pt
+      P3 align=JUSTIFY (4)
+      P4 align=JUSTIFY (4)
+      P4 Run: [As part of the initiative, we will be applying GitHub Copilot capabilities to specific use cases so ] => size=12.0pt
+      P4 Run: [experience its benefits first-hand] => size=12.0pt, bold
+      P4 Run: [. To do so we will accompany EIB with ] => size=12.0pt
+      P4 Run: [3 initiatives] => size=12.0pt, bold
+      P4 Run: [:] => size=12.0pt
+  Shape: type=PICTURE (13), Name="Picture 2"
+    Pos: left=1176178, top=2264343, w=1225269, h=1225269
+    Image saved: slide4_img2.png (image/png)
+  Shape: type=PICTURE (13), Name="Picture 4"
+    Pos: left=4090109, top=2395089, w=963779, h=963779
+    Image saved: slide4_img3.jpg (image/jpeg)
+  Shape: type=TEXT_BOX (17), Name="TextBox 8"
+    Pos: left=897068, top=3433801, w=1783490, h=1200329
+    Text: "Database Migration\n(Exploratory)\nUse GitHub Copilot capabilities from Sybase to MSSQL"
+      P0 align=CENTER (2)
+      P0 Run: [Database Migration] => size=14.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [(Exploratory)] => size=14.0pt, bold
+      P2 align=CENTER (2)
+      P2 Run: [Use GitHub Copilot capabilities from Sybase to MSSQL] => size=10.0pt
+  Shape: type=TEXT_BOX (17), Name="TextBox 10"
+    Pos: left=3680253, top=3433801, w=1783490, h=1138773
+    Text: "Citizen Developers\n(Deployment)\nSupport onboarding and empower Citizen Developers from FI and other directorates"
+      P0 align=CENTER (2)
+      P0 Run: [Citizen Developers] => size=14.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [(Deployment)] => size=14.0pt, bold
+      P2 align=CENTER (2)
+      P2 Run: [Support onboarding and empower Citizen Developers from FI and other directorates] => size=10.0pt
+  Shape: type=TEXT_BOX (17), Name="TextBox 11"
+    Pos: left=6052953, top=3437060, w=2486369, h=830997
+    Text: "Documentation generation (Exploratory)\nGenerate documentation for a legacy┬áapp"
+      P0 align=CENTER (2)
+      P0 Run: [Documentation ] => font=Fujitsu Infinity Pro, size=14.0pt, bold
+      P0 Run: [generation (] => font=Fujitsu Infinity Pro, size=14.0pt, bold
+      P0 Run: [Exploratory)] => font=Fujitsu Infinity Pro, size=14.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Generate documentation for a legacy┬áapp] => size=10.0pt
+  Shape: type=PICTURE (13), Name="Picture 4"
+    Pos: left=6814247, top=2529257, w=963779, h=904544
+    Image saved: slide4_img4.png (image/png)
+  Shape: type=AUTO_SHAPE (1), Name="Oval 5"
+    Pos: left=5988267, top=2279685, w=2615738, h=2308231
+      P0 align=CENTER (2)
+
+=== SLIDE 5 ===
+Layout: 1_Section divider
+  Shape: type=PLACEHOLDER (14), Name="πé┐πéñπâêπâ½ 3"
+    Pos: left=252000, top=2159847, w=6157292, h=523220
+    Text: "GitHub Copilot"
+  Shape: type=PLACEHOLDER (14), Name="σ¡ùσ╣ò 4"
+    Pos: left=252000, top=2876457, w=6141390, h=276999
+    Text: "FujitsuΓÇÖs journey"
+
+=== SLIDE 6 ===
+Layout: Bullets 1-col
+  Shape: type=PLACEHOLDER (14), Name="Title 1"
+    Pos: left=252000, top=151256, w=7631485, h=430887
+    Text: "GitHub Copilot"
+  Shape: type=PICTURE (13), Name="Picture 4"
+    Pos: left=2563890, top=779889, w=786485, h=786485
+    Image saved: slide6_img5.jpg (image/jpeg)
+  Shape: type=PICTURE (13), Name="Picture 4"
+    Pos: left=5793625, top=882761, w=1226399, h=625397
+    Image saved: slide6_img6.png (image/png)
+  Shape: type=LINE (9), Name="Straight Connector 6"
+    Pos: left=4584454, top=1436467, w=0, h=3298093
+  Shape: type=GROUP (6), Name="Group 8"
+    Pos: left=819528, top=1642427, w=7302122, h=914400
+  Shape: type=GROUP (6), Name="Group 14"
+    Pos: left=819528, top=2665715, w=7302122, h=914400
+  Shape: type=GROUP (6), Name="Group 40"
+    Pos: left=819528, top=3689002, w=7302122, h=914400
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 2"
+    Pos: left=1733928, top=1655081, w=2853312, h=921448
+    Text: "General Availability\nGitHub Copilot is made available to the public."
+      P0 align=CENTER (2)
+      P0 Run: [General Availability] => size=14.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [GitHub Copilot is made available to the public.] => size=10.0pt
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 2"
+    Pos: left=903639, top=2314509, w=746174, h=215444
+    Text: "2022"
+      P0 align=CENTER (2)
+      P0 Run: [2022] => size=14.0pt, bold
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 2"
+    Pos: left=867444, top=3297168, w=746174, h=215444
+    Text: "2023"
+      P0 align=CENTER (2)
+      P0 Run: [2023] => size=14.0pt, bold
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 2"
+    Pos: left=673062, top=4280741, w=1207328, h=215444
+    Text: "2025/26"
+      P0 align=CENTER (2)
+      P0 Run: [2025/26] => size=14.0pt, bold
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 2"
+    Pos: left=1756937, top=2680636, w=2790156, h=523220
+    Text: "First-gen ΓÇ£AgentsΓÇ¥\nInitial introduction of ΓÇ£agentsΓÇ¥ and improved context."
+      P0 align=CENTER (2)
+      P0 Run: [First-gen ΓÇ£AgentsΓÇ¥] => size=14.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Initial introduction of ] => size=10.0pt
+      P1 Run: [ΓÇ£agentsΓÇ¥ ] => size=10.0pt, bold
+      P1 Run: [and ] => size=10.0pt
+      P1 Run: [improved context.] => size=10.0pt, bold
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 2"
+    Pos: left=1763459, top=3697621, w=2794250, h=523220
+    Text: "Next-Gen AI\nMission Control features allowing for agent mobilization, allowing real Agentic Workflows"
+      P0 align=CENTER (2)
+      P0 Run: [Next-Gen AI] => size=14.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Mission Control ] => size=10.0pt, bold
+      P1 Run: [features allowing for agent mobilization, allowing real ] => size=10.0pt
+      P1 Run: [Agentic Workflows] => size=10.0pt, bold
+  Shape: type=TEXT_BOX (17), Name="TextBox 51"
+    Pos: left=4618140, top=1615465, w=3474411, h=615553
+    Text: "First steps\nFujitsu began exploring GitHub Copilot, improving productivity on simple, repetitive tasks."
+      P0 align=CENTER (2)
+      P0 Run: [First steps] => size=14.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Fujitsu ] => size=10.0pt
+      P1 Run: [began exploring GitHub Copilot] => size=10.0pt, bold
+      P1 Run: [, improving productivity on ] => size=10.0pt
+      P1 Run: [simple] => size=10.0pt, bold
+      P1 Run: [, ] => size=10.0pt
+      P1 Run: [repetitive tasks.] => size=10.0pt, bold
+  Shape: type=TEXT_BOX (17), Name="TextBox 52"
+    Pos: left=4570101, top=2627502, w=3551549, h=615553
+    Text: "Mid-journey\nFujitsu expanded its GitHub Copilot use with the introduction of agent capabilities."
+      P0 align=CENTER (2)
+      P0 Run: [Mid-journey] => size=14.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Fujitsu expanded its GitHub Copilot use with the introduction of ] => size=10.0pt
+      P1 Run: [agent capabilities] => size=10.0pt, bold
+      P1 Run: [.] => size=10.0pt
+  Shape: type=TEXT_BOX (17), Name="TextBox 53"
+    Pos: left=4570101, top=3657772, w=3551549, h=615553
+    Text: "The Game Changer\nToday Fujitsu is heavily exploring GitHub CopilotΓÇÖs agent-based workflow.."
+      P0 align=CENTER (2)
+      P0 Run: [The Game Changer] => size=14.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Today ] => size=10.0pt
+      P1 Run: [Fujitsu] => size=10.0pt, bold
+      P1 Run: [ is heavily exploring GitHub CopilotΓÇÖs ] => size=10.0pt
+      P1 Run: [agent-based] => size=10.0pt, bold
+      P1 Run: [ ] => size=10.0pt
+      P1 Run: [workflow.] => size=10.0pt, bold
+      P1 Run: [.] => size=10.0pt
+
+=== SLIDE 7 ===
+Layout: 1_Section divider
+  Shape: type=PLACEHOLDER (14), Name="πé┐πéñπâêπâ½ 3"
+    Pos: left=252000, top=2159847, w=6157292, h=523220
+    Text: "Agentic Workflow"
+  Shape: type=PLACEHOLDER (14), Name="σ¡ùσ╣ò 4"
+    Pos: left=252000, top=2876457, w=6141390, h=276999
+    Text: "Demo"
+
+=== SLIDE 8 ===
+Layout: Bullets 2-col
+  Shape: type=PLACEHOLDER (14), Name="Title 1"
+    Pos: left=252000, top=151256, w=7590845, h=430887
+    Text: "Our Use Case"
+  Shape: type=PLACEHOLDER (14), Name="Text Placeholder 2"
+    Pos: left=252000, top=775705, w=4140000, h=3416320
+    Text: "The Objective\nEstablish an end-to-end Agentic Workflow designed to manage the SDLC Autonomously. \n\nThe rules\nMinimalist Input: The system must function with limited data, such as simple UI screenshots, prompts or Database schemas, to create an application.\n\n\nThe Strategic ΓÇ£WhyΓÇ¥\nOperating with minimu"
+      P0 align=CENTER (2)
+      P0 Run: [The Objective] => size=18.0pt, bold
+      P1 align=JUSTIFY (4)
+      P1 Run: [Establish an ] => size=10.0pt
+      P1 Run: [end-to-end Agentic Workflow ] => size=10.0pt, bold
+      P1 Run: [designed to manage the ] => size=10.0pt
+      P1 Run: [SDLC] => size=10.0pt, bold
+      P1 Run: [ ] => size=10.0pt
+      P1 Run: [Autonomously. ] => size=10.0pt, bold
+      P2 align=JUSTIFY (4)
+      P3 align=CENTER (2)
+      P3 Run: [The rules] => size=18.0pt, bold
+      P4 align=JUSTIFY (4)
+      P4 Run: [Minimalist Input] => size=10.0pt, bold
+      P4 Run: [: The system must function with limited data, such as simple ] => size=10.0pt
+      P4 Run: [UI screenshots, prompts ] => size=10.0pt, bold
+      P4 Run: [or] => size=10.0pt
+      P4 Run: [ Database schemas] => size=10.0pt, bold
+      P4 Run: [, to create an application.] => size=10.0pt
+      P5 align=JUSTIFY (4)
+      P6 align=JUSTIFY (4)
+      P7 align=CENTER (2)
+      P7 Run: [The Strategic ΓÇ£WhyΓÇ¥] => size=18.0pt, bold
+      P8 align=JUSTIFY (4)
+      P8 Run: [Operating with minimum input allows to ] => size=10.0pt
+      P8 Run: [reproduce worst-case scenario] => size=10.0pt, bold
+      P8 Run: [ situations and test Agentic limits.] => size=10.0pt
+      P9 align=JUSTIFY (4)
+      P10 align=CENTER (2)
+      P10 Run: [The Demo] => size=18.0pt, bold
+      P11 align=JUSTIFY (4)
+      P11 Run: [The use case you are about to see is the ] => font=Fujitsu Infinity Pro, size=10.0pt
+      P11 Run: [migration] => font=Fujitsu Infinity Pro, size=10.0pt, bold
+      P11 Run: [ of an ] => font=Fujitsu Infinity Pro, size=10.0pt
+      P11 Run: [OutSystems] => font=Fujitsu Infinity Pro, size=10.0pt, bold
+      P11 Run: [ ] => font=Fujitsu Infinity Pro, size=10.0pt, bold
+      P11 Run: [application using nothing more database schemas and ] => font=Fujitsu Infinity Pro, size=10.0pt
+      P11 Run: [Print screens] => font=Fujitsu Infinity Pro, size=10.0pt, bold
+      P11 Run: [. ] => font=Fujitsu Infinity Pro, size=10.0pt
+      P12 align=JUSTIFY (4)
+  Shape: type=PICTURE (13), Name="Picture 14"
+    Pos: left=4938881, top=1085980, w=1851778, h=1485770
+    Image saved: slide8_img7.png (image/png)
+  Shape: type=PICTURE (13), Name="Picture 15"
+    Pos: left=6933063, top=2773547, w=1633182, h=1598285
+    Image saved: slide8_img8.png (image/png)
+  Shape: type=LINE (9), Name="Connector: Curved 16"
+    Pos: left=6790659, top=1828865, w=958995, h=944682
+
+=== SLIDE 9 ===
+Layout: 1_Section divider
+  Shape: type=PLACEHOLDER (14), Name="πé┐πéñπâêπâ½ 3"
+    Pos: left=252000, top=1636627, w=6157292, h=1046440
+    Text: "EIBG Agentic Workflow Adoption"
+  Shape: type=PLACEHOLDER (14), Name="σ¡ùσ╣ò 4"
+    Pos: left=252000, top=2876457, w=6141390, h=276999
+    Text: "FujitsuΓÇÖs support"
+
+=== SLIDE 10 ===
+Layout: Bullets 1-col
+  Shape: type=PLACEHOLDER (14), Name="Title 1"
+    Pos: left=251999, top=151256, w=7742469, h=430887
+    Text: "SDLC"
+  Shape: type=PLACEHOLDER (14), Name="Text Placeholder 10"
+    Pos: left=251999, top=919453, w=8640000, h=1107996
+    Text: "We propose to support EIBΓÇÖs Task force in the implementation of an Agentic SDLC workflow.\n\nIn this exploratory use case, we will offer our technical experience to explore and validate different approaches.\n\nThe objective is to help making the right decisions to ensure the Agentic Workflow can be reu"
+      P0 align=JUSTIFY (4)
+      P0 Run: [We propose to support EIBΓÇÖs ] => size=12.0pt
+      P0 Run: [Task force] => size=12.0pt, bold
+      P0 Run: [ in the implementation of an ] => size=12.0pt
+      P0 Run: [Agentic SDLC workflow.] => size=12.0pt, bold
+      P1 align=JUSTIFY (4)
+      P2 align=JUSTIFY (4)
+      P2 Run: [In this exploratory use case, we will offer our ] => size=12.0pt
+      P2 Run: [technical experience ] => size=12.0pt, bold
+      P2 Run: [to explore and ] => size=12.0pt
+      P2 Run: [validate different approaches] => size=12.0pt, bold
+      P2 Run: [.] => size=12.0pt
+      P3 align=JUSTIFY (4)
+      P4 align=JUSTIFY (4)
+      P4 Run: [The objective is to help making the right decisions to ensure the ] => size=12.0pt
+      P4 Run: [Agentic Workflow ] => size=12.0pt, bold
+      P4 Run: [can be reused by other EIBG teams to address other use cases.] => size=12.0pt
+  Shape: type=GROUP (6), Name="Group 9"
+    Pos: left=6435604, top=2438400, w=1097280, h=1153934
+  Shape: type=GROUP (6), Name="Group 8"
+    Pos: left=1886464, top=2438400, w=3114674, h=1097280
+  Shape: type=AUTO_SHAPE (1), Name="σåå: σíùπéèπüñπü╢πüùπü¬πüù 36"
+    Pos: left=4161034, top=2438400, w=1097280, h=1097280
+      P0 align=CENTER (2)
+  Shape: type=TEXT_BOX (17), Name="TextBox 11"
+    Pos: left=1543359, top=3535680, w=1783490, h=830997
+    Text: "Alignment meeting\n(2 weeks)\nIdentify key challenges and technical perimeter"
+      P0 align=CENTER (2)
+      P0 Run: [Alignment meeting] => size=14.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [(2 weeks)] => size=14.0pt, bold
+      P2 align=CENTER (2)
+      P2 Run: [Identify ] => size=10.0pt
+      P2 Run: [key challenges ] => size=10.0pt, bold
+      P2 Run: [and ] => size=10.0pt
+      P2 Run: [technical perimeter] => size=10.0pt, bold
+  Shape: type=TEXT_BOX (17), Name="TextBox 12"
+    Pos: left=3817928, top=3535680, w=1783490, h=984885
+    Text: "Feasibility study\n(4 weeks)\nEnsure technical access feasibility and experiment different approaches"
+      P0 align=CENTER (2)
+      P0 Run: [Feasibility study] => size=14.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [(4 weeks)] => size=14.0pt, bold
+      P2 align=CENTER (2)
+      P2 Run: [Ensure ] => size=10.0pt
+      P2 Run: [technical access feasibility ] => size=10.0pt, bold
+      P2 Run: [and experiment ] => size=10.0pt
+      P2 Run: [different approaches] => size=10.0pt, bold
+  Shape: type=TEXT_BOX (17), Name="TextBox 15"
+    Pos: left=6210978, top=3535679, w=1783490, h=830997
+    Text: "Evaluate and plan\n(2 weeks)\nDocument and present exploration outcomes"
+      P0 align=CENTER (2)
+      P0 Run: [Evaluate and plan] => size=14.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [(2 weeks)] => size=14.0pt, bold
+      P2 align=CENTER (2)
+      P2 Run: [Document and present ] => size=10.0pt
+      P2 Run: [exploration outcomes] => size=10.0pt, bold
+  Shape: type=PICTURE (13), Name="Picture 10"
+    Pos: left=2127327, top=2679263, w=615554, h=615554
+    Image saved: slide10_img9.png (image/png)
+  Shape: type=AUTO_SHAPE (1), Name="Arrow: Right 16"
+    Pos: left=3160652, top=2837414, w=862904, h=374434
+      P0 align=CENTER (2)
+  Shape: type=AUTO_SHAPE (1), Name="Arrow: Right 17"
+    Pos: left=5452736, top=2837414, w=862904, h=374434
+      P0 align=CENTER (2)
+
+=== SLIDE 11 ===
+Layout: 1_Close
+  Shape: type=PLACEHOLDER (14), Name="πé┐πéñπâêπâ½ 2"
+    Pos: left=252000, top=2077039, w=3492379, h=615553
+
+=== SLIDE 12 ===
+Layout: Bullets 2-col
+  Shape: type=PLACEHOLDER (14), Name="Title 1"
+    Pos: left=252000, top=151256, w=7590845, h=430887
+    Text: "Agentic Workflow - Planning"
+  Shape: type=GROUP (6), Name="Group 53"
+    Pos: left=249558, top=1364070, w=4406953, h=3250054
+  Shape: type=PLACEHOLDER (14), Name="Text Placeholder 52"
+    Pos: left=270036, top=819631, w=8603929, h=369332
+    Text: "We first applied this workflow built by 2 developer using OutSystems. This application took several months to implement."
+      P0 align=JUSTIFY (4)
+      P0 Run: [We first applied this workflow built by ] => size=12.0pt
+      P0 Run: [2 developer ] => size=12.0pt, bold
+      P0 Run: [using ] => size=12.0pt
+      P0 Run: [OutSystems] => size=12.0pt, bold
+      P0 Run: [. ] => size=12.0pt, bold
+      P0 Run: [This application took ] => size=12.0pt
+      P0 Run: [several months to implement] => size=12.0pt, bold
+      P0 Run: [.] => size=12.0pt
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 52"
+    Pos: left=2740428, top=1494928, w=4981348, h=646331
+    Text: "1. Feeding the Workflow\nTo reproduce the worst-case scenario, a human starts by taking prints screens of the application and passing them to our Planner Agent."
+      P0 align=CENTER (2)
+      P0 Run: [1. Feeding the Workflow] => size=18.0pt, bold
+      P1 align=JUSTIFY (4)
+      P1 Run: [To reproduce the ] => size=12.0pt
+      P1 Run: [worst-case scenario] => size=12.0pt, bold
+      P1 Run: [, a human starts by taking ] => size=12.0pt
+      P1 Run: [prints screens ] => size=12.0pt, bold
+      P1 Run: [of the application and passing them to our ] => size=12.0pt
+      P1 Run: [Planner Agent] => size=12.0pt, bold
+      P1 Run: [.] => size=12.0pt
+  Shape: type=TEXT_BOX (17), Name="TextBox 56"
+    Pos: left=2399722, top=3607894, w=1305204, h=400110
+    Text: "Planner\nAgent"
+      P0 align=CENTER (2)
+      P0 Run: [Planner] => size=10.0pt
+      P1 align=CENTER (2)
+      P1 Run: [Agent] => size=10.0pt
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 52"
+    Pos: left=3561276, top=2571750, w=4769923, h=646331
+    Text: "2. Planning\nThe Planner Agent then creates a Detailed Plan that breakdowns work and structures the rest of the workflow."
+      P0 align=CENTER (2)
+      P0 Run: [2. Planning] => size=18.0pt, bold
+      P1 align=JUSTIFY (4)
+      P1 Run: [The ] => font=Fujitsu Infinity Pro, size=12.0pt
+      P1 Run: [Planner Agent ] => font=Fujitsu Infinity Pro, size=12.0pt, bold
+      P1 Run: [then creates a ] => font=Fujitsu Infinity Pro, size=12.0pt
+      P1 Run: [Detailed Plan ] => font=Fujitsu Infinity Pro, size=12.0pt, bold
+      P1 Run: [that breakdowns work and structures the rest of the workflow.] => font=Fujitsu Infinity Pro, size=12.0pt
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 52"
+    Pos: left=5726313, top=4004350, w=3139773, h=646331
+    Text: "3. Orchestrator\nThe Detailed plan is then passed to the Orchestrator."
+      P0 align=CENTER (2)
+      P0 Run: [3. Orchestrator] => size=18.0pt, bold
+      P1 align=JUSTIFY (4)
+      P1 Run: [The ] => font=Fujitsu Infinity Pro, size=12.0pt
+      P1 Run: [Detailed plan ] => font=Fujitsu Infinity Pro, size=12.0pt, bold
+      P1 Run: [is then passed to the Orchestrator.] => font=Fujitsu Infinity Pro, size=12.0pt
+  Shape: type=GROUP (6), Name="Group 1042"
+    Pos: left=4656511, top=3809103, w=988476, h=1290743
+  Shape: type=PICTURE (13), Name="Picture 2"
+    Pos: left=2147321, top=1533723, w=440227, h=440227
+    Image saved: slide12_img10.png (image/png)
+
+=== SLIDE 13 ===
+Layout: Bullets 2-col
+  Shape: type=PLACEHOLDER (14), Name="Title 21"
+    Pos: left=252000, top=151256, w=7590845, h=430887
+    Text: "Agentic Workflow ΓÇô Development"
+  Shape: type=GROUP (6), Name="Group 30"
+    Pos: left=1963853, top=2824327, w=914400, h=914400
+  Shape: type=GROUP (6), Name="Group 42"
+    Pos: left=4417701, top=3894084, w=1390714, h=1098160
+  Shape: type=PICTURE (13), Name="Picture 51"
+    Pos: left=2795719, top=3961770, w=664032, h=561627
+    Image saved: slide13_img11.png (image/png)
+  Shape: type=PICTURE (13), Name="Picture 58"
+    Pos: left=2995381, top=4630131, w=530936, h=362113
+    Image saved: slide13_img12.png (image/png)
+  Shape: type=TEXT_BOX (17), Name="TextBox 59"
+    Pos: left=5956621, top=5126696, w=1390715, h=276999
+    Text: "Frontend Agent\nCreates the application UI"
+      P0 align=CENTER (2)
+      P0 Run: [Frontend Agent] => size=6.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Creates the application UI] => size=6.0pt
+  Shape: type=LINE (9), Name="Connector: Curved 64"
+    Pos: left=1515892, top=2382170, w=335417, h=536163
+  Shape: type=LINE (9), Name="Connector: Curved 67"
+    Pos: left=2015475, top=2418749, w=341784, h=469372
+  Shape: type=LINE (9), Name="Connector: Curved 74"
+    Pos: left=1863804, top=3679610, w=690083, h=1573072
+  Shape: type=LINE (9), Name="Connector: Curved 80"
+    Pos: left=2548956, top=3995820, w=106113, h=387414
+  Shape: type=LINE (9), Name="Connector: Curved 87"
+    Pos: left=3459751, top=4239308, w=1321598, h=3276
+  Shape: type=LINE (9), Name="Connector: Curved 90"
+    Pos: left=3526317, top=4239308, w=1255032, h=571880
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 52"
+    Pos: left=2827929, top=1581582, w=4023721, h=830997
+    Text: "1. Iterating through each User Story\nFor each Task┬áthe Orchestrator Agent triggers the┬áDeveloper Agents. Front-end and Back-end depending on the task type┬á."
+      P0 align=CENTER (2)
+      P0 Run: [1. Iterating through each User Story] => size=18.0pt, bold
+      P1 align=JUSTIFY (4)
+      P1 Run: [For each ] => font=Fujitsu Infinity Pro, size=12.0pt
+      P1 Run: [Task┬á] => font=Fujitsu Infinity Pro, size=12.0pt, bold
+      P1 Run: [the ] => font=Fujitsu Infinity Pro, size=12.0pt
+      P1 Run: [Orchestrator Agent ] => font=Fujitsu Infinity Pro, size=12.0pt, bold
+      P1 Run: [triggers the┬á] => font=Fujitsu Infinity Pro, size=12.0pt
+      P1 Run: [Developer Agents. Front-end ] => font=Fujitsu Infinity Pro, size=12.0pt, bold
+      P1 Run: [and ] => font=Fujitsu Infinity Pro, size=12.0pt
+      P1 Run: [Back-end ] => font=Fujitsu Infinity Pro, size=12.0pt, bold
+      P1 Run: [depending on the task type┬á.] => font=Fujitsu Infinity Pro, size=12.0pt
+  Shape: type=PLACEHOLDER (14), Name="Text Placeholder 52"
+    Pos: left=270036, top=819631, w=8603929, h=184666
+    Text: "Once all Tasks┬áare detailed, the Orchestrator Agent triggers the next phase ΓÇô Development."
+      P0 align=JUSTIFY (4)
+      P0 Run: [Once all ] => font=Fujitsu Infinity Pro, size=12.0pt
+      P0 Run: [Tasks┬á] => font=Fujitsu Infinity Pro, size=12.0pt, bold
+      P0 Run: [are detailed, the ] => font=Fujitsu Infinity Pro, size=12.0pt
+      P0 Run: [Orchestrator Agent ] => font=Fujitsu Infinity Pro, size=12.0pt, bold
+      P0 Run: [triggers the next phase ΓÇô ] => font=Fujitsu Infinity Pro, size=12.0pt
+      P0 Run: [Development] => font=Fujitsu Infinity Pro, size=12.0pt, bold
+      P0 Run: [.] => font=Fujitsu Infinity Pro, size=12.0pt
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 52"
+    Pos: left=3198242, top=2870171, w=4558441, h=646331
+    Text: "2. Development\nEach Agent creates the necessary components to reproduce the original application."
+      P0 align=CENTER (2)
+      P0 Run: [2. Development] => size=18.0pt, bold
+      P1 align=JUSTIFY (4)
+      P1 Run: [Each ] => size=12.0pt
+      P1 Run: [Agent] => size=12.0pt, bold
+      P1 Run: [ creates the necessary components to reproduce the original application.] => size=12.0pt
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 52"
+    Pos: left=5635535, top=3845868, w=3376073, h=461665
+    Text: "3. The result\nFinally, a functional application is generated"
+      P0 align=CENTER (2)
+      P0 Run: [3. The result] => size=18.0pt, bold
+      P1 align=JUSTIFY (4)
+      P1 Run: [Finally, a functional application is generated] => size=12.0pt
+  Shape: type=GROUP (6), Name="Group 114"
+    Pos: left=1457443, top=1221181, w=988476, h=1261362
+  Shape: type=GROUP (6), Name="Group 121"
+    Pos: left=928071, top=2817960, w=988476, h=1303145
+  Shape: type=TEXT_BOX (17), Name="TextBox 123"
+    Pos: left=1914067, top=3736361, w=988476, h=400110
+    Text: "Back-end\nAgent"
+      P0 align=CENTER (2)
+      P0 Run: [Back-end] => size=10.0pt
+      P1 align=CENTER (2)
+      P1 Run: [Agent] => size=10.0pt
+  Shape: type=PICTURE (13), Name="Picture 22"
+    Pos: left=757127, top=1283520, w=673520, h=767483
+    Image saved: slide13_img13.jpg (image/jpeg)
+  Shape: type=TEXT_BOX (17), Name="TextBox 4"
+    Pos: left=441285, top=1967429, w=1305204, h=400109
+    Text: "Detailed\nplan"
+      P0 align=CENTER (2)
+      P0 Run: [Detailed] => size=10.0pt
+      P1 align=CENTER (2)
+      P1 Run: [plan] => size=10.0pt
+  Shape: type=PICTURE (13), Name="Picture 1"
+    Pos: left=378619, top=1478756, w=271463, h=278607
+    Image saved: slide13_img14.png (image/png)
+  Shape: type=PICTURE (13), Name="Picture 3"
+    Pos: left=378618, top=1721643, w=271463, h=278607
+    Image saved: slide13_img15.png (image/png)
+  Shape: type=PICTURE (13), Name="Picture 5"
+    Pos: left=385762, top=1971674, w=271463, h=278607
+    Image saved: slide13_img16.png (image/png)
+  Shape: type=PICTURE (13), Name="Picture 6"
+    Pos: left=2141675, top=2344391, w=271463, h=278607
+    Image saved: slide13_img17.png (image/png)
+
+=== SLIDE 14 ===
+Layout: Bullets 2-col
+  Shape: type=PLACEHOLDER (14), Name="Title 1"
+    Pos: left=252000, top=151256, w=7590845, h=430887
+    Text: "Agentic Workflow ΓÇô Analysis"
+  Shape: type=GROUP (6), Name="Group 10"
+    Pos: left=2938910, top=2284466, w=937597, h=1023006
+  Shape: type=GROUP (6), Name="Group 25"
+    Pos: left=2306748, top=3487421, w=1305204, h=1336909
+  Shape: type=GROUP (6), Name="Group 24"
+    Pos: left=1036033, top=1434896, w=988476, h=1290743
+  Shape: type=GROUP (6), Name="Group 48"
+    Pos: left=395628, top=3218846, w=1568286, h=1120056
+  Shape: type=LINE (9), Name="Connector: Curved 49"
+    Pos: left=1406719, top=2849190, w=1218982, h=971879
+  Shape: type=LINE (9), Name="Connector: Curved 54"
+    Pos: left=1657230, top=2185300, w=1595325, h=1008917
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 52"
+    Pos: left=2306748, top=1308314, w=4981348, h=646331
+    Text: "1. From Plan to Blueprint\nCombining the application print screens and the High-level plan, the Analyst agent produces multiple User Stories."
+      P0 align=CENTER (2)
+      P0 Run: [1. From Plan to Blueprint] => size=18.0pt, bold
+      P1 align=JUSTIFY (4)
+      P1 Run: [Combining the application print screens and the High-level plan, the Analyst agent produces multiple] => size=12.0pt
+  Shape: type=PLACEHOLDER (14), Name="Text Placeholder 52"
+    Pos: left=270036, top=819631, w=8603929, h=184666
+    Text: "The next step is to detail the user stories."
+      P0 align=JUSTIFY (4)
+      P0 Run: [The next step is to detail the user stories.] => size=12.0pt
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 52"
+    Pos: left=4244272, top=2463513, w=4531428, h=830997
+    Text: "2. Analyzing\nThe User Stories are fed back to the Orchestrator Agent. These detailed work items will allow Developer Agents to create a high-fidelity application."
+      P0 align=CENTER (2)
+      P0 Run: [2. Analyzing] => size=18.0pt, bold
+      P1 align=JUSTIFY (4)
+      P1 Run: [The ] => size=12.0pt
+      P1 Run: [User Stories ] => size=12.0pt, bold
+      P1 Run: [are fed back to the ] => size=12.0pt
+      P1 Run: [Orchestrator Agent] => size=12.0pt, bold
+      P1 Run: [. These detailed work items will allow ] => size=12.0pt
+      P1 Run: [Developer Agents ] => size=12.0pt, bold
+      P1 Run: [to create a ] => size=12.0pt
+      P1 Run: [high-fidelity ] => size=12.0pt, bold
+      P1 Run: [application.] => size=12.0pt
+
+=== SLIDE 15 ===
+Layout: Bullets 2-col
+  Shape: type=PLACEHOLDER (14), Name="Title 21"
+    Pos: left=252000, top=151256, w=7590845, h=430887
+    Text: "Agentic Workflow ΓÇô Development"
+  Shape: type=GROUP (6), Name="Group 30"
+    Pos: left=1963853, top=2824327, w=914400, h=914400
+  Shape: type=GROUP (6), Name="Group 42"
+    Pos: left=4417701, top=3894084, w=1390714, h=1098160
+  Shape: type=PICTURE (13), Name="Picture 51"
+    Pos: left=2795719, top=3961770, w=664032, h=561627
+    Image saved: slide15_img18.png (image/png)
+  Shape: type=PICTURE (13), Name="Picture 58"
+    Pos: left=2995381, top=4630131, w=530936, h=362113
+    Image saved: slide15_img19.png (image/png)
+  Shape: type=TEXT_BOX (17), Name="TextBox 59"
+    Pos: left=5956621, top=5126696, w=1390715, h=276999
+    Text: "Frontend Agent\nCreates the application UI"
+      P0 align=CENTER (2)
+      P0 Run: [Frontend Agent] => size=6.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Creates the application UI] => size=6.0pt
+  Shape: type=LINE (9), Name="Connector: Curved 64"
+    Pos: left=1515892, top=2382170, w=335417, h=536163
+  Shape: type=LINE (9), Name="Connector: Curved 67"
+    Pos: left=2015475, top=2418749, w=341784, h=469372
+  Shape: type=LINE (9), Name="Connector: Curved 74"
+    Pos: left=1863804, top=3679610, w=690083, h=1573072
+  Shape: type=LINE (9), Name="Connector: Curved 80"
+    Pos: left=2548956, top=3995820, w=106113, h=387414
+  Shape: type=LINE (9), Name="Connector: Curved 87"
+    Pos: left=3459751, top=4239308, w=1321598, h=3276
+  Shape: type=LINE (9), Name="Connector: Curved 90"
+    Pos: left=3526317, top=4239308, w=1255032, h=571880
+  Shape: type=GROUP (6), Name="Group 101"
+    Pos: left=474472, top=1321715, w=2341406, h=1406293
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 52"
+    Pos: left=2827929, top=1581582, w=4023721, h=646331
+    Text: "1. Iterating through each User Story\nFor each User Story the Orchestrator Agent triggers the Front-end and Back-end Developer Agents."
+      P0 align=CENTER (2)
+      P0 Run: [1. Iterating through each User Story] => size=18.0pt, bold
+      P1 align=JUSTIFY (4)
+      P1 Run: [For each ] => size=12.0pt
+      P1 Run: [User Story ] => size=12.0pt, bold
+      P1 Run: [the ] => size=12.0pt
+      P1 Run: [Orchestrator Agent ] => size=12.0pt, bold
+      P1 Run: [triggers the ] => size=12.0pt
+      P1 Run: [Front-end ] => size=12.0pt, bold
+      P1 Run: [and ] => size=12.0pt
+      P1 Run: [Back-end Developer Agents] => size=12.0pt, bold
+      P1 Run: [.] => size=12.0pt
+  Shape: type=PLACEHOLDER (14), Name="Text Placeholder 52"
+    Pos: left=270036, top=819631, w=8603929, h=184666
+    Text: "Once all User Stories are detailed, the Orchestrator Agent triggers the next phase ΓÇô Development."
+      P0 align=JUSTIFY (4)
+      P0 Run: [Once all ] => size=12.0pt
+      P0 Run: [User Stories ] => size=12.0pt, bold
+      P0 Run: [are detailed, the ] => size=12.0pt
+      P0 Run: [Orchestrator Agent ] => size=12.0pt, bold
+      P0 Run: [triggers the next phase ΓÇô ] => size=12.0pt
+      P0 Run: [Development] => size=12.0pt, bold
+      P0 Run: [.] => size=12.0pt
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 52"
+    Pos: left=3198242, top=2870171, w=4558441, h=646331
+    Text: "2. Development\nEach Agent creates the necessary components to reproduce the original application."
+      P0 align=CENTER (2)
+      P0 Run: [2. Development] => size=18.0pt, bold
+      P1 align=JUSTIFY (4)
+      P1 Run: [Each ] => size=12.0pt
+      P1 Run: [Agent] => size=12.0pt, bold
+      P1 Run: [ creates the necessary components to reproduce the original application.] => size=12.0pt
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 52"
+    Pos: left=5635535, top=3845868, w=3376073, h=461665
+    Text: "3. The result\nFinally, a functional application is generated"
+      P0 align=CENTER (2)
+      P0 Run: [3. The result] => size=18.0pt, bold
+      P1 align=JUSTIFY (4)
+      P1 Run: [Finally, a functional application is generated] => size=12.0pt
+  Shape: type=GROUP (6), Name="Group 114"
+    Pos: left=1457443, top=1221181, w=988476, h=1261362
+  Shape: type=GROUP (6), Name="Group 121"
+    Pos: left=928071, top=2817960, w=988476, h=1303145
+  Shape: type=TEXT_BOX (17), Name="TextBox 123"
+    Pos: left=1914067, top=3736361, w=988476, h=400110
+    Text: "Back-end\nAgent"
+      P0 align=CENTER (2)
+      P0 Run: [Back-end] => size=10.0pt
+      P1 align=CENTER (2)
+      P1 Run: [Agent] => size=10.0pt
+
+=== SLIDE 16 ===
+Layout: Bullets 1-col
+  Shape: type=PLACEHOLDER (14), Name="Title 1"
+    Pos: left=252000, top=151256, w=7631485, h=430887
+    Text: "What you are about to see"
+  Shape: type=GROUP (6), Name="Group 2048"
+    Pos: left=1366067, top=2524451, w=685800, h=685800
+  Shape: type=GROUP (6), Name="Group 2049"
+    Pos: left=4231810, top=2662676, w=914400, h=914400
+  Shape: type=GROUP (6), Name="Group 2051"
+    Pos: left=6938203, top=2083758, w=685800, h=685800
+  Shape: type=GROUP (6), Name="Group 2052"
+    Pos: left=6932470, top=3024928, w=685800, h=685800
+  Shape: type=GROUP (6), Name="Group 2050"
+    Pos: left=4040261, top=1042255, w=685800, h=685800
+  Shape: type=PICTURE (13), Name="Picture 18"
+    Pos: left=933917, top=2011779, w=359466, h=289011
+    Image saved: slide16_img20.png (image/png)
+  Shape: type=LINE (9), Name="Connector: Curved 2146"
+    Pos: left=5146210, top=2439510, w=1791993, h=680366
+  Shape: type=LINE (9), Name="Connector: Curved 2148"
+    Pos: left=5146210, top=3119876, w=1786260, h=247952
+  Shape: type=LINE (9), Name="Connector: Curved 2151"
+    Pos: left=7624003, top=2426658, w=954029, h=373887
+  Shape: type=LINE (9), Name="Connector: Curved 2154"
+    Pos: left=7618270, top=2800545, w=959762, h=567283
+  Shape: type=LINE (9), Name="Connector: Curved 2158"
+    Pos: left=4726061, top=1385155, w=286238, h=1411432
+  Shape: type=LINE (9), Name="Connector: Curved 2180"
+    Pos: left=2991904, top=2069347, w=333347, h=2414287
+  Shape: type=LINE (9), Name="Connector: Curved 2186"
+    Pos: left=1293383, top=2156285, w=415584, h=368166
+  Shape: type=LINE (9), Name="Connector: Curved 2190"
+    Pos: left=552581, top=2037292, w=381336, h=118993
+  Shape: type=LINE (9), Name="Connector: Curved 2195"
+    Pos: left=4040262, top=1385156, w=191549, h=1734721
+  Shape: type=GROUP (6), Name="Group 2205"
+    Pos: left=-80618, top=1859128, w=857393, h=637251
+  Shape: type=AUTO_SHAPE (1), Name="Rectangle: Rounded Corners 2207"
+    Pos: left=1621507, top=802324, w=1011242, h=340363
+    Text: "Print screens are provided to the Analyst agent"
+      P0 align=CENTER (2)
+      P0 Run: [Print screens are provided to the Analyst agent] => size=6.0pt
+  Shape: type=TEXT_BOX (17), Name="TextBox 2208"
+    Pos: left=756104, top=2297083, w=659242, h=276999
+    Text: "Application print screens"
+      P0 align=CENTER (2)
+      P0 Run: [Application print screens] => size=6.0pt
+  Shape: type=LINE (9), Name="Connector: Curved 2209"
+    Pos: left=847942, top=1238215, w=1039273, h=507857
+  Shape: type=LINE (9), Name="Connector: Curved 2213"
+    Pos: left=2632749, top=972506, w=1507945, h=170182
+  Shape: type=TEXT_BOX (17), Name="TextBox 2226"
+    Pos: left=1156064, top=3211000, w=1096376, h=646331
+    Text: "Planner Agent\nBased on the print screens breakdown the work in number of user stories that need to be created"
+      P0 align=CENTER (2)
+      P0 Run: [Planner Agent] => size=6.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Based on the print screens breakdown the work in number of user stories that need to be created] => size=6.0pt
+  Shape: type=GROUP (6), Name="Group 2117"
+    Pos: left=2607154, top=3254422, w=939048, h=576814
+  Shape: type=GROUP (6), Name="Group 2233"
+    Pos: left=4935037, top=1383582, w=647969, h=587550
+  Shape: type=TEXT_BOX (17), Name="TextBox 2234"
+    Pos: left=4030703, top=3563355, w=1390715, h=461665
+    Text: "Orchestrator Agent\nOrchestrates the work between Analyst Agent and Backend and Frontend agents"
+      P0 align=CENTER (2)
+      P0 Run: [Orchestrator Agent] => size=6.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Orchestrates the work between ] => size=6.0pt
+      P1 Run: [Analyst Agent ] => size=6.0pt, bold
+      P1 Run: [and ] => size=6.0pt
+      P1 Run: [Backend ] => size=6.0pt, bold
+      P1 Run: [and ] => size=6.0pt
+      P1 Run: [Frontend ] => size=6.0pt, bold
+      P1 Run: [agents] => size=6.0pt
+  Shape: type=TEXT_BOX (17), Name="TextBox 4"
+    Pos: left=3846169, top=1726569, w=1149469, h=646331
+    Text: "Analyst Agent\nBased the input deduces the necessary database model, classes and screens to reproduce the application"
+      P0 align=CENTER (2)
+      P0 Run: [Analyst Agent] => size=6.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Based the input deduces the necessary ] => size=6.0pt
+      P1 Run: [database model] => size=6.0pt, bold
+      P1 Run: [, ] => size=6.0pt
+      P1 Run: [classes] => size=6.0pt, bold
+      P1 Run: [ ] => size=6.0pt
+      P1 Run: [and screens to reproduce] => size=6.0pt, bold
+      P1 Run: [ the application] => size=6.0pt
+  Shape: type=AUTO_SHAPE (1), Name="Rectangle: Rounded Corners 2055"
+    Pos: left=2201992, top=1614908, w=861513, h=424651
+    Text: "High-level plans are provided to ensure coherent work breakdown"
+      P0 align=CENTER (2)
+      P0 Run: [High-level] => size=6.0pt, bold
+      P0 Run: [ plans are provided to ensure coherent work breakdown] => size=6.0pt
+  Shape: type=LINE (9), Name="Connector: Curved 2060"
+    Pos: left=2632749, top=2039560, w=277180, h=1386147
+  Shape: type=LINE (9), Name="Connector: Curved 2072"
+    Pos: left=3150611, top=624826, w=472220, h=1507945
+  Shape: type=TEXT_BOX (17), Name="TextBox 2132"
+    Pos: left=2872804, top=2184164, w=1035704, h=553998
+    Text: "Orchestrator Agent triggers Analyst agent to produce User stories based on print screens and High-level plan"
+      P0 align=CENTER (2)
+      P0 Run: [Orchestrator Agent ] => size=6.0pt, bold
+      P0 Run: [triggers ] => size=6.0pt
+      P0 Run: [Analyst] => size=6.0pt, bold
+      P0 Run: [ agent to produce U] => size=6.0pt
+      P0 Run: [ser stories ] => size=6.0pt, bold
+      P0 Run: [based on ] => size=6.0pt
+      P0 Run: [print screens ] => size=6.0pt, bold
+      P0 Run: [and ] => size=6.0pt
+      P0 Run: [High-level plan] => size=6.0pt, bold
+  Shape: type=GROUP (6), Name="Group 2197"
+    Pos: left=5318334, top=1927275, w=1087156, h=921632
+  Shape: type=GROUP (6), Name="Group 2203"
+    Pos: left=8353838, top=2622381, w=857393, h=637251
+  Shape: type=GROUP (6), Name="Group 8"
+    Pos: left=7746923, top=1792458, w=980111, h=684653
+  Shape: type=PICTURE (13), Name="Picture 26"
+    Pos: left=8346748, top=3389096, w=142396, h=142396
+    Image saved: slide16_img21.png (image/png)
+  Shape: type=GROUP (6), Name="Group 9"
+    Pos: left=7837083, top=3182889, w=980111, h=646872
+  Shape: type=TEXT_BOX (17), Name="TextBox 2237"
+    Pos: left=6580010, top=3711564, w=1390715, h=276999
+    Text: "Frontend Agent\nCreates the application UI"
+      P0 align=CENTER (2)
+      P0 Run: [Frontend Agent] => size=6.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Creates the application UI] => size=6.0pt
+  Shape: type=TEXT_BOX (17), Name="TextBox 2238"
+    Pos: left=6622567, top=1735037, w=1390715, h=276999
+    Text: "Frontend Agent\nCreates the application UI"
+      P0 align=CENTER (2)
+      P0 Run: [Frontend Agent] => size=6.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Creates the application UI] => size=6.0pt
+
+=== SLIDE 17 ===
+Layout: Bullets 2-col
+  Shape: type=PLACEHOLDER (14), Name="Title 1"
+    Pos: left=252000, top=151256, w=7590845, h=430887
+    Text: "Agentic Workflow ΓÇô Analysis"
+  Shape: type=GROUP (6), Name="Group 10"
+    Pos: left=2938910, top=2284466, w=937597, h=1023006
+  Shape: type=GROUP (6), Name="Group 25"
+    Pos: left=2306748, top=3487421, w=1305204, h=1336909
+  Shape: type=GROUP (6), Name="Group 24"
+    Pos: left=1036033, top=1434896, w=988476, h=1290743
+  Shape: type=GROUP (6), Name="Group 48"
+    Pos: left=395628, top=3218846, w=1568286, h=1120056
+  Shape: type=LINE (9), Name="Connector: Curved 49"
+    Pos: left=1406719, top=2849190, w=1218982, h=971879
+  Shape: type=LINE (9), Name="Connector: Curved 54"
+    Pos: left=1657230, top=2185300, w=1595325, h=1008917
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 52"
+    Pos: left=2306748, top=1308314, w=4981348, h=553998
+    Text: "1. From Plan to Blueprint\nCombining the application print screens and the High-level plan, the Analyst agent produces multiple User Stories."
+      P0 align=CENTER (2)
+      P0 Run: [1. From Plan to Blueprint] => size=12.0pt, bold
+      P1 align=JUSTIFY (4)
+      P1 Run: [Combining the application print screens and the High-level plan, the Analyst agent produces multiple] => size=12.0pt
+  Shape: type=PLACEHOLDER (14), Name="Text Placeholder 52"
+    Pos: left=270036, top=819631, w=8603929, h=184666
+    Text: "The next step is to detail the user stories."
+      P0 align=JUSTIFY (4)
+      P0 Run: [The next step is to detail the user stories.] => size=12.0pt
+  Shape: type=TEXT_BOX (17), Name="Text Placeholder 52"
+    Pos: left=4244272, top=2463513, w=4531428, h=738664
+    Text: "2. Analysing\nThe User Stories are fed back to the Orchestrator Agent. These detailed work items will allow Developer Agents to create a high-fidelity application."
+      P0 align=CENTER (2)
+      P0 Run: [2. ] => size=12.0pt, bold
+      P0 Run: [Analysing] => size=12.0pt, bold
+      P1 align=JUSTIFY (4)
+      P1 Run: [The ] => size=12.0pt
+      P1 Run: [User Stories ] => size=12.0pt, bold
+      P1 Run: [are fed back to the ] => size=12.0pt
+      P1 Run: [Orchestrator Agent] => size=12.0pt, bold
+      P1 Run: [. These detailed work items will allow ] => size=12.0pt
+      P1 Run: [Developer Agents ] => size=12.0pt, bold
+      P1 Run: [to create a ] => size=12.0pt
+      P1 Run: [high-fidelity ] => size=12.0pt, bold
+      P1 Run: [application.] => size=12.0pt
+
+=== SLIDE 18 ===
+Layout: Bullets 1-col
+  Shape: type=PLACEHOLDER (14), Name="Title 1"
+    Pos: left=252000, top=151256, w=7631485, h=430887
+    Text: "What you are about to see"
+  Shape: type=PLACEHOLDER (14), Name="Text Placeholder 10"
+    Pos: left=251999, top=919453, w=8640000, h=338554
+    Text: "Help envagiliye stadard"
+  Shape: type=GROUP (6), Name="Group 2048"
+    Pos: left=1379715, top=3434302, w=685800, h=685800
+  Shape: type=GROUP (6), Name="Group 2049"
+    Pos: left=4245458, top=3572527, w=914400, h=914400
+  Shape: type=GROUP (6), Name="Group 2051"
+    Pos: left=6951851, top=2993609, w=685800, h=685800
+  Shape: type=GROUP (6), Name="Group 2052"
+    Pos: left=6946118, top=3934779, w=685800, h=685800
+  Shape: type=GROUP (6), Name="Group 2050"
+    Pos: left=4053909, top=1952106, w=685800, h=685800
+  Shape: type=PICTURE (13), Name="Picture 18"
+    Pos: left=947565, top=2921630, w=359466, h=289011
+    Image saved: slide18_img22.png (image/png)
+  Shape: type=LINE (9), Name="Connector: Curved 2146"
+    Pos: left=5159858, top=3349361, w=1791993, h=680366
+  Shape: type=LINE (9), Name="Connector: Curved 2148"
+    Pos: left=5159858, top=4029727, w=1786260, h=247952
+  Shape: type=LINE (9), Name="Connector: Curved 2151"
+    Pos: left=7637651, top=3336509, w=954029, h=373887
+  Shape: type=LINE (9), Name="Connector: Curved 2154"
+    Pos: left=7631918, top=3710396, w=959762, h=567283
+  Shape: type=LINE (9), Name="Connector: Curved 2158"
+    Pos: left=4739709, top=2295006, w=286238, h=1411432
+  Shape: type=LINE (9), Name="Connector: Curved 2180"
+    Pos: left=3005552, top=2979198, w=333347, h=2414287
+  Shape: type=LINE (9), Name="Connector: Curved 2186"
+    Pos: left=1307031, top=3066136, w=415584, h=368166
+  Shape: type=LINE (9), Name="Connector: Curved 2190"
+    Pos: left=566229, top=2947143, w=381336, h=118993
+  Shape: type=LINE (9), Name="Connector: Curved 2195"
+    Pos: left=4053910, top=2295007, w=191549, h=1734721
+  Shape: type=GROUP (6), Name="Group 2205"
+    Pos: left=-66970, top=2768979, w=857393, h=637251
+  Shape: type=AUTO_SHAPE (1), Name="Rectangle: Rounded Corners 2207"
+    Pos: left=1635155, top=1712175, w=1011242, h=340363
+    Text: "Print screens are provided to the Analyst agent"
+      P0 align=CENTER (2)
+      P0 Run: [Print screens are provided to the Analyst agent] => size=6.0pt
+  Shape: type=TEXT_BOX (17), Name="TextBox 2208"
+    Pos: left=769752, top=3206934, w=659242, h=276999
+    Text: "Application print screens"
+      P0 align=CENTER (2)
+      P0 Run: [Application print screens] => size=6.0pt
+  Shape: type=LINE (9), Name="Connector: Curved 2209"
+    Pos: left=861590, top=2148066, w=1039273, h=507857
+  Shape: type=LINE (9), Name="Connector: Curved 2213"
+    Pos: left=2646397, top=1882357, w=1507945, h=170182
+  Shape: type=TEXT_BOX (17), Name="TextBox 2226"
+    Pos: left=1169712, top=4120851, w=1096376, h=646331
+    Text: "Planner Agent\nBased on the print screens breakdown the work in number of user stories that need to be created"
+      P0 align=CENTER (2)
+      P0 Run: [Planner Agent] => size=6.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Based on the print screens breakdown the work in number of user stories that need to be created] => size=6.0pt
+  Shape: type=GROUP (6), Name="Group 2117"
+    Pos: left=2620802, top=4164273, w=939048, h=576814
+  Shape: type=GROUP (6), Name="Group 2233"
+    Pos: left=4948685, top=2293433, w=647969, h=587550
+  Shape: type=TEXT_BOX (17), Name="TextBox 2234"
+    Pos: left=4044351, top=4473206, w=1390715, h=461665
+    Text: "Orchestrator Agent\nOrchestrates the work between Analyst Agent and Backend and Frontend agents"
+      P0 align=CENTER (2)
+      P0 Run: [Orchestrator Agent] => size=6.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Orchestrates the work between ] => size=6.0pt
+      P1 Run: [Analyst Agent ] => size=6.0pt, bold
+      P1 Run: [and ] => size=6.0pt
+      P1 Run: [Backend ] => size=6.0pt, bold
+      P1 Run: [and ] => size=6.0pt
+      P1 Run: [Frontend ] => size=6.0pt, bold
+      P1 Run: [agents] => size=6.0pt
+  Shape: type=TEXT_BOX (17), Name="TextBox 4"
+    Pos: left=3859817, top=2636420, w=1149469, h=646331
+    Text: "Analyst Agent\nBased the input deduces the necessary database model, classes and screens to reproduce the application"
+      P0 align=CENTER (2)
+      P0 Run: [Analyst Agent] => size=6.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Based the input deduces the necessary ] => size=6.0pt
+      P1 Run: [database model] => size=6.0pt, bold
+      P1 Run: [, ] => size=6.0pt
+      P1 Run: [classes] => size=6.0pt, bold
+      P1 Run: [ ] => size=6.0pt
+      P1 Run: [and screens to reproduce] => size=6.0pt, bold
+      P1 Run: [ the application] => size=6.0pt
+  Shape: type=AUTO_SHAPE (1), Name="Rectangle: Rounded Corners 2055"
+    Pos: left=2215640, top=2524759, w=861513, h=424651
+    Text: "High-level plans are provided to ensure coherent work breakdown"
+      P0 align=CENTER (2)
+      P0 Run: [High-level] => size=6.0pt, bold
+      P0 Run: [ plans are provided to ensure coherent work breakdown] => size=6.0pt
+  Shape: type=LINE (9), Name="Connector: Curved 2060"
+    Pos: left=2646397, top=2949411, w=277180, h=1386147
+  Shape: type=LINE (9), Name="Connector: Curved 2072"
+    Pos: left=3164259, top=1534677, w=472220, h=1507945
+  Shape: type=TEXT_BOX (17), Name="TextBox 2132"
+    Pos: left=2886452, top=3094015, w=1035704, h=553998
+    Text: "Orchestrator Agent triggers Analyst agent to produce User stories based on print screens and High-level plan"
+      P0 align=CENTER (2)
+      P0 Run: [Orchestrator Agent ] => size=6.0pt, bold
+      P0 Run: [triggers ] => size=6.0pt
+      P0 Run: [Analyst] => size=6.0pt, bold
+      P0 Run: [ agent to produce U] => size=6.0pt
+      P0 Run: [ser stories ] => size=6.0pt, bold
+      P0 Run: [based on ] => size=6.0pt
+      P0 Run: [print screens ] => size=6.0pt, bold
+      P0 Run: [and ] => size=6.0pt
+      P0 Run: [High-level plan] => size=6.0pt, bold
+  Shape: type=GROUP (6), Name="Group 2197"
+    Pos: left=5331982, top=2837126, w=1087156, h=921632
+  Shape: type=GROUP (6), Name="Group 2203"
+    Pos: left=8367486, top=3532232, w=857393, h=637251
+  Shape: type=GROUP (6), Name="Group 8"
+    Pos: left=7760571, top=2702309, w=980111, h=684653
+  Shape: type=PICTURE (13), Name="Picture 26"
+    Pos: left=8360396, top=4298947, w=142396, h=142396
+    Image saved: slide18_img23.png (image/png)
+  Shape: type=GROUP (6), Name="Group 9"
+    Pos: left=7850731, top=4092740, w=980111, h=646872
+  Shape: type=TEXT_BOX (17), Name="TextBox 2237"
+    Pos: left=6593658, top=4621415, w=1390715, h=276999
+    Text: "Frontend Agent\nCreates the application UI"
+      P0 align=CENTER (2)
+      P0 Run: [Frontend Agent] => size=6.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Creates the application UI] => size=6.0pt
+  Shape: type=TEXT_BOX (17), Name="TextBox 2238"
+    Pos: left=6636215, top=2644888, w=1390715, h=276999
+    Text: "Frontend Agent\nCreates the application UI"
+      P0 align=CENTER (2)
+      P0 Run: [Frontend Agent] => size=6.0pt, bold
+      P1 align=CENTER (2)
+      P1 Run: [Creates the application UI] => size=6.0pt
+
+=== THEME INFO ===

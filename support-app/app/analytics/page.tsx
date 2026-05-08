@@ -67,21 +67,21 @@ interface AnalyticsData {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  'Resolved': '#10B981',
-  'In Progress': '#3B82F6',
-  'Open': '#F59E0B',
-  'Backlog': '#8B5CF6',
-  'Closed': '#6B7280',
-  'Waiting for customer': '#EC4899',
+  'Resolved': '#39FF14',
+  'In Progress': '#00F0FF',
+  'Open': '#FFD600',
+  'Backlog': '#BF5AF2',
+  'Closed': '#636B89',
+  'Waiting for customer': '#FF2D78',
 };
 
 const CHART_THEME = {
-  fontFamily: "'Inter', 'Segoe UI', sans-serif",
+  fontFamily: "'Orbitron', 'Inter', sans-serif",
   fontSize: 11,
-  axisColor: '#94A3B8',
-  gridColor: '#E2E8F0',
-  tooltipBg: '#1E293B',
-  tooltipBorder: '#334155',
+  axisColor: '#636B89',
+  gridColor: 'rgba(0, 240, 255, 0.06)',
+  tooltipBg: 'rgba(10, 10, 26, 0.95)',
+  tooltipBorder: 'rgba(0, 240, 255, 0.2)',
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

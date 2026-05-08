@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watson X - Discovery & Exploration | Fujitsu</title>
+    <meta name="description" content="Fujitsu's discovery and exploration of IBM Watson X AI Agent platform, covering architecture, endpoint configuration, and integration findings.">
+    
+    <!-- Reveal.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+    
+    <!-- Google Fonts - closest to Fujitsu Infinity Pro -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --fujitsu-red: #FF0000;
+            --fujitsu-dark-red: #CC0000;
+            --fujitsu-black: #1a1a1a;
+            --fujitsu-dark: #2d2d2d;
+            --fujitsu-gray: #4a4a4a;
+            --fujitsu-light-gray: #f5f5f5;
+            --fujitsu-white: #ffffff;
+            --fujitsu-accent-blue: #0066cc;
+            --fujitsu-teal: #00897B;
+            --font-primary: 'Inter', 'Segoe UI', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+        }
+
+        .reveal {
+            font-family: var(--font-primary);
+            font-size: 24px;
+            color: var(--fujitsu-dark);
+        }
+
+        .reveal .slides {
+            text-align: left;
+        }
+
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+            font-family: var(--font-primary);
+            font-weight: 700;
+            text-transform: none;
+            letter-spacing: -0.02em;
+        }
+
+        /* ============================================
+           SLIDE TYPE: Section Divider (Dark background)
+           ============================================ */
+        .slide-section-divider {
+            background: linear-gradient(135deg, var(--fujitsu-black) 0%, #1a1a2e 50%, var(--fujitsu-dark) 100%) !important;
+            color: var(--fujitsu-white) !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-section-divider::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255,0,0,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0,102,204,0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .slide-section-divider .red-accent-bar {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 40%;
+            background: var(--fujitsu-red);
+            border-radius: 0 3px 3px 0;
+        }
+
+        .slide-section-divider h2 {
+            color: var(--fujitsu-white) !important;
+            font-size: 2.4em;
+            margin-bottom: 0.2em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .slide-section-divider .section-subtitle {
+            color: var(--fujitsu-red) !important;
+            font-size: 1.1em;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Geometric decoration for section slides */
+        .slide-section-divider .geo-decoration {
+            position: absolute;
+            right: -50px;
+            top: -50px;
+            width: 350px;
+            height: 350px;
+            border: 2px solid rgba(255,0,0,0.15);
+            border-radius: 50%;
+        }
+
+        .slide-section-divider .geo-decoration::after {
+            content: '';
+            position: absolute;
+            right: 40px;
+            top: 40px;
+            width: 200px;
+            height: 200px;
+            border: 2px solid rgba(255,0,0,0.08);
+            border-radius: 50%;
+        }
+
+        /* ============================================
+           SLIDE TYPE: Title/Cover Slide
+           ============================================ */
+        .slide-cover {
+            background: linear-gradient(140deg, #0a0a0a 0%, #1a1a2e 40%, #16213e 100%) !important;
+            color: var(--fujitsu-white) !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-cover::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,0,0,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .slide-cover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--fujitsu-red), transparent);
+        }
+
+        .slide-cover h1 {
+            color: var(--fujitsu-white) !important;
+            font-size: 2.6em;
+            margin-bottom: 0.3em;
+            line-height: 1.1;
+        }
+
+        .slide-cover .cover-subtitle {
+            color: var(--fujitsu-red) !important;
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 1.5em;
+        }
+
+        .slide-cover .cover-meta {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.7em;
+            margin-top: 2em;
+        }
+
+        .fujitsu-logo {
+            font-size: 0.9em;
+            font-weight: 800;
+            letter-spacing: 0.15em;
+            color: var(--fujitsu-red) !important;
+            text-transform: uppercase;
+        }
+
+        /* ============================================
+           SLIDE TYPE: Content Slide (White background)
+           ============================================ */
+        .slide-content {
+            background: var(--fujitsu-white) !important;
+            position: relative;
+        }
+
+        .slide-content::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--fujitsu-red) 0%, var(--fujitsu-red) 30%, #eee 30%);
+        }
+
+        .slide-content h2 {
+            color: var(--fujitsu-dark) !important;
+            font-size: 1.6em;
+            margin-bottom: 0.8em;
+            padding-bottom: 0.3em;
+            border-bottom: 3px solid var(--fujitsu-red);
+            display: inline-block;
+        }
+
+        .slide-content .slide-header-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--fujitsu-red);
+        }
+
+        /* ============================================
+           SLIDE TYPE: Agenda
+           ============================================ */
+        .agenda-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 1.5em;
+        }
+
+        .agenda-item {
+            text-align: center;
+            padding: 25px 15px;
+            border-radius: 12px;
+            background: var(--fujitsu-light-gray);
+            transition: all 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .agenda-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            border-color: var(--fujitsu-red);
+        }
+
+        .agenda-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--fujitsu-red);
+            color: white;
+            font-size: 1.4em;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .agenda-title {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: var(--fujitsu-dark);
+            line-height: 1.4;
+        }
+
+        /* ============================================
+           Content Elements
+           ============================================ */
+        .text-justify {
+            text-align: justify;
+            font-size: 0.8em;
+            line-height: 1.8;
+        }
+
+        .text-bold {
+            font-weight: 700;
+        }
+
+        .text-red {
+            color: var(--fujitsu-red);
+            font-weight: 700;
+        }
+
+        .content-box {
+            background: var(--fujitsu-light-gray);
+            border-radius: 12px;
+            padding: 24px 28px;
+            margin: 15px 0;
+            border-left: 4px solid var(--fujitsu-red);
+        }
+
+        .content-box h3 {
+            font-size: 1.1em;
+            color: var(--fujitsu-dark);
+            margin-bottom: 0.5em;
+        }
+
+        .content-box p {
+            font-size: 0.75em;
+            line-height: 1.7;
+            color: var(--fujitsu-gray);
+        }
+
+        /* Code blocks */
+        .code-block {
+            background: #1e1e2e;
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--fujitsu-red), #ff6b6b, var(--fujitsu-accent-blue));
+        }
+
+        .code-block .code-label {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 0.55em;
+            color: rgba(255,255,255,0.4);
+            font-family: var(--font-mono);
+        }
+
+        .code-block pre {
+            margin: 0;
+            font-family: var(--font-mono);
+            font-size: 0.65em;
+            line-height: 1.6;
+            color: #cdd6f4;
+        }
+
+        .code-block .keyword { color: #cba6f7; }
+        .code-block .string { color: #a6e3a1; }
+        .code-block .comment { color: #6c7086; font-style: italic; }
+        .code-block .property { color: #89b4fa; }
+        .code-block .value { color: #fab387; }
+
+        /* Two-column layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 0.5em;
+        }
+
+        .two-col-wide-left {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 30px;
+            margin-top: 0.5em;
+        }
+
+        /* Info cards */
+        .info-card {
+            background: linear-gradient(135deg, var(--fujitsu-light-gray), #fff);
+            border-radius: 12px;
+            padding: 20px 24px;
+            border: 1px solid #e8e8e8;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+        }
+
+        .info-card h3 {
+            font-size: 0.9em;
+            margin-bottom: 0.6em;
+            color: var(--fujitsu-dark);
+        }
+
+        .info-card p, .info-card ul {
+            font-size: 0.7em;
+            line-height: 1.7;
+            color: var(--fujitsu-gray);
+        }
+
+        .info-card ul {
+            padding-left: 1.2em;
+        }
+
+        .info-card ul li {
+            margin-bottom: 0.4em;
+        }
+
+        .info-card .icon-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .info-card .icon-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1em;
+            flex-shrink: 0;
+        }
+
+        .icon-red { background: rgba(255,0,0,0.1); color: var(--fujitsu-red); }
+        .icon-blue { background: rgba(0,102,204,0.1); color: var(--fujitsu-accent-blue); }
+        .icon-teal { background: rgba(0,137,123,0.1); color: var(--fujitsu-teal); }
+
+        /* Architecture diagram */
+        .arch-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .arch-node {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px 20px;
+            text-align: center;
+            min-width: 130px;
+            transition: all 0.3s ease;
+        }
+
+        .arch-node:hover {
+            border-color: var(--fujitsu-red);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .arch-node .node-icon {
+            font-size: 1.8em;
+            margin-bottom: 8px;
+        }
+
+        .arch-node .node-label {
+            font-size: 0.65em;
+            font-weight: 600;
+            color: var(--fujitsu-dark);
+        }
+
+        .arch-node .node-sub {
+            font-size: 0.5em;
+            color: var(--fujitsu-gray);
+            margin-top: 4px;
+        }
+
+        .arch-node.highlighted {
+            border-color: var(--fujitsu-red);
+            background: rgba(255,0,0,0.03);
+        }
+
+        .arch-arrow {
+            font-size: 1.4em;
+            color: var(--fujitsu-red);
+        }
+
+        /* Key findings */
+        .finding-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin: 14px 0;
+            padding: 14px 18px;
+            background: var(--fujitsu-light-gray);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .finding-item:hover {
+            background: #eee;
+        }
+
+        .finding-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--fujitsu-red);
+            color: white;
+            font-size: 0.75em;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .finding-text {
+            font-size: 0.72em;
+            line-height: 1.6;
+            color: var(--fujitsu-gray);
+        }
+
+        .finding-text strong {
+            color: var(--fujitsu-dark);
+        }
+
+        /* Table styling */
+        .styled-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.68em;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .styled-table thead tr {
+            background: var(--fujitsu-red);
+            color: white;
+        }
+
+        .styled-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .styled-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .styled-table tbody tr:nth-child(even) {
+            background: var(--fujitsu-light-gray);
+        }
+
+        .styled-table tbody tr:hover {
+            background: rgba(255,0,0,0.04);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            margin: 20px 0;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--fujitsu-red), #ff6b6b);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin: 18px 0;
+            padding-left: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -23px;
+            top: 4px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--fujitsu-red);
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--fujitsu-red);
+        }
+
+        .timeline-item h4 {
+            font-size: 0.85em;
+            margin-bottom: 4px;
+            color: var(--fujitsu-dark);
+        }
+
+        .timeline-item p {
+            font-size: 0.65em;
+            color: var(--fujitsu-gray);
+            line-height: 1.5;
+        }
+
+        /* Close slide */
+        .slide-close {
+            background: linear-gradient(140deg, #0a0a0a 0%, #1a1a2e 40%, #16213e 100%) !important;
+            color: var(--fujitsu-white) !important;
+            text-align: center !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide-close::before {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,0,0,0.1) 0%, transparent 70%);
+        }
+
+        .slide-close h2 {
+            color: var(--fujitsu-white) !important;
+            font-size: 2.2em;
+        }
+
+        .slide-close .close-line {
+            width: 80px;
+            height: 4px;
+            background: var(--fujitsu-red);
+            margin: 20px auto;
+            border-radius: 2px;
+        }
+
+        .slide-close p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8em;
+        }
+
+        /* Status badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.6em;
+            font-weight: 600;
+        }
+
+        .status-badge.success {
+            background: rgba(0,200,83,0.12);
+            color: #00c853;
+        }
+
+        .status-badge.warning {
+            background: rgba(255,152,0,0.12);
+            color: #ff9800;
+        }
+
+        .status-badge.info {
+            background: rgba(0,102,204,0.12);
+            color: var(--fujitsu-accent-blue);
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            background: #eee;
+            border-radius: 10px;
+            height: 12px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--fujitsu-red), #ff6b6b);
+            transition: width 0.6s ease;
+        }
+
+        /* Navigation and controls customization */
+        .reveal .controls {
+            color: var(--fujitsu-red);
+        }
+
+        .reveal .progress {
+            height: 4px;
+        }
+
+        .reveal .progress span {
+            background: var(--fujitsu-red);
+        }
+
+        .reveal .slide-number {
+            font-family: var(--font-primary);
+            font-size: 14px;
+            color: var(--fujitsu-gray);
+            background: transparent;
+            right: 20px;
+            bottom: 15px;
+        }
+
+        /* Fujitsu branding footer */
+        .fujitsu-footer {
+            position: absolute;
+            bottom: 12px;
+            left: 20px;
+            font-size: 0.5em;
+            color: rgba(0,0,0,0.3);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            z-index: 10;
+        }
+
+        .slide-section-divider .fujitsu-footer,
+        .slide-cover .fujitsu-footer,
+        .slide-close .fujitsu-footer {
+            color: rgba(255,255,255,0.25);
+        }
+
+        /* Animation helpers */
+        .fade-up {
+            animation: fadeUp 0.6s ease-out;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive font size for smaller screens */
+        @media (max-width: 900px) {
+            .reveal { font-size: 18px; }
+            .agenda-grid { grid-template-columns: repeat(2, 1fr); }
+            .two-col, .two-col-wide-left { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+
+            <!-- ======================== SLIDE 1: COVER ======================== -->
+            <section data-state="cover" class="slide-cover">
+                <div style="padding-left: 40px;">
+                    <div class="fujitsu-logo" style="margin-bottom: 2em;">FUJITSU</div>
+                    <h1>Watson X<br>Discovery & Exploration</h1>
+                    <div class="cover-subtitle">IBM Watson X AI Agent Platform</div>
+                    <p style="font-size: 0.75em; color: rgba(255,255,255,0.7); max-width: 550px; line-height: 1.6;">
+                        Exploring the architecture, endpoint configuration, and integration capabilities of IBM's Watson X AI Agent platform.
+                    </p>
+                    <div class="cover-meta">
+                        <span style="color: rgba(255,255,255,0.4);">Fujitsu&rsquo;s Support</span>
+                        &nbsp;&bull;&nbsp;
+                        <span style="color: rgba(255,255,255,0.4);">February 2026</span>
+                    </div>
+                </div>
+                <div class="fujitsu-footer">FUJITSU CONFIDENTIAL</div>
+            </section>
+
+            <!-- ======================== SLIDE 2: AGENDA ======================== -->
+            <section class="slide-content">
+                <div class="slide-header-bar"></div>
+                <h2>Agenda</h2>
+                <div class="agenda-grid">
+                    <div class="agenda-item">
+                        <div class="agenda-number">1</div>
+                        <div class="agenda-title">Context</div>
+                    </div>
+                    <div class="agenda-item">
+                        <div class="agenda-number">2</div>
+                        <div class="agenda-title">Watson X<br>Architecture</div>
+                    </div>
+                    <div class="agenda-item">
+                        <div class="agenda-number">3</div>
+                        <div class="agenda-title">Endpoint<br>Discovery</div>
+                    </div>
+                    <div class="agenda-item">
+                        <div class="agenda-number">4</div>
+                        <div class="agenda-title">Agent<br>Configuration</div>
+                    </div>
+                    <div class="agenda-item">
+                        <div class="agenda-number">5</div>
+                        <div class="agenda-title">Key Findings &<br>Next Steps</div>
+                    </div>
+                    <div class="agenda-item">
+                        <div class="agenda-number">6</div>
+                        <div class="agenda-title">Conclusions</div>
+                    </div>
+                </div>
+                <div class="fujitsu-footer">FUJITSU</div>
+            </section>
+
+            <!-- ======================== SLIDE 3: SECTION - Context ======================== -->
+            <section class="slide-section-divider">
+                <div class="red-accent-bar"></div>
+                <div class="geo-decoration"></div>
+                <div style="padding-left: 40px;">
+                    <h2>Context</h2>
+                    <div class="section-subtitle">Watson X – AI Agent Exploration</div>
+                </div>
+                <div class="fujitsu-footer">FUJITSU CONFIDENTIAL</div>
+            </section>
+
+            <!-- ======================== SLIDE 4: Context Content ======================== -->
+            <section class="slide-content">
+                <div class="slide-header-bar"></div>
+                <h2>Meeting Objective</h2>
+                <p class="text-justify">
+                    Fujitsu is currently exploring <span class="text-bold">IBM Watson X</span> as part of its AI-driven modernisation journey.
+                    The objective of this discovery phase is to understand <span class="text-bold">Watson X's AI Agent capabilities</span>,
+                    evaluate its <span class="text-bold">architecture and integration model</span>, and determine how it can be leveraged 
+                    for enterprise-grade agentic workflows.
+                </p>
+
+                <div class="two-col" style="margin-top: 25px;">
+                    <div class="content-box">
+                        <h3><i class="fas fa-bullseye" style="color: var(--fujitsu-red); margin-right: 8px;"></i>Discovery Goals</h3>
+                        <p>
+                            Identify the <strong>endpoint structure</strong>, understand the <strong>agent configuration model</strong>,
+                            and map the <strong>JavaScript widget integration</strong> pattern used by Watson X for embedding AI agents.
+                        </p>
+                    </div>
+                    <div class="content-box">
+                        <h3><i class="fas fa-lightbulb" style="color: var(--fujitsu-red); margin-right: 8px;"></i>Strategic Value</h3>
+                        <p>
+                            Understanding Watson X's architecture enables Fujitsu to <strong>evaluate interoperability</strong> with
+                            existing systems and assess its potential as part of a <strong>multi-platform AI agent strategy</strong>.
+                        </p>
+                    </div>
+                </div>
+                <div class="fujitsu-footer">FUJITSU</div>
+            </section>
+
+            <!-- ======================== SLIDE 5: SECTION - Architecture ======================== -->
+            <section class="slide-section-divider">
+                <div class="red-accent-bar"></div>
+                <div class="geo-decoration"></div>
+                <div style="padding-left: 40px;">
+                    <h2>Watson X Architecture</h2>
+                    <div class="section-subtitle">Platform Overview</div>
+                </div>
+                <div class="fujitsu-footer">FUJITSU CONFIDENTIAL</div>
+            </section>
+
+            <!-- ======================== SLIDE 6: Architecture Overview ======================== -->
+            <section class="slide-content">
+                <div class="slide-header-bar"></div>
+                <h2>Watson X Platform Overview</h2>
+                
+                <div class="arch-diagram">
+                    <div class="arch-node">
+                        <div class="node-icon">👤</div>
+                        <div class="node-label">End User</div>
+                        <div class="node-sub">Web Browser</div>
+                    </div>
+                    <div class="arch-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="arch-node highlighted">
+                        <div class="node-icon">🧩</div>
+                        <div class="node-label">JS Widget</div>
+                        <div class="node-sub">Embedded Snippet</div>
+                    </div>
+                    <div class="arch-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="arch-node">
+                        <div class="node-icon">🌐</div>
+                        <div class="node-label">Watson X Host</div>
+                        <div class="node-sub">IBM Cloud Endpoint</div>
+                    </div>
+                    <div class="arch-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="arch-node">
+                        <div class="node-icon">🤖</div>
+                        <div class="node-label">AI Agent</div>
+                        <div class="node-sub">Agent ID Bound</div>
+                    </div>
+                </div>
+
+                <div class="content-box" style="margin-top: 20px;">
+                    <h3>How it Works</h3>
+                    <p>
+                        Watson X embeds AI agents via a <strong>JavaScript widget</strong> that connects to IBM's cloud infrastructure.
+                        The widget is configured with a <strong>hostURL</strong> (cloud endpoint) and an <strong>agentId</strong> 
+                        (unique agent identifier), establishing a direct communication channel between the browser and the AI agent backend.
+                    </p>
+                </div>
+                <div class="fujitsu-footer">FUJITSU</div>
+            </section>
+
+            <!-- ======================== SLIDE 7: SECTION - Endpoint Discovery ======================== -->
+            <section class="slide-section-divider">
+                <div class="red-accent-bar"></div>
+                <div class="geo-decoration"></div>
+                <div style="padding-left: 40px;">
+                    <h2>Endpoint Discovery</h2>
+                    <div class="section-subtitle">Configuration Analysis</div>
+                </div>
+                <div class="fujitsu-footer">FUJITSU CONFIDENTIAL</div>
+            </section>
+
+            <!-- ======================== SLIDE 8: Endpoint Configuration ======================== -->
+            <section class="slide-content">
+                <div class="slide-header-bar"></div>
+                <h2>Watson X Widget Configuration</h2>
+                <p style="font-size: 0.75em; color: var(--fujitsu-gray); margin-bottom: 15px;">
+                    The Watson X AI Agent is embedded using a JavaScript snippet containing two critical parameters:
+                </p>
+
+                <div class="code-block">
+                    <div class="code-label">JavaScript</div>
+                    <pre>
+<span class="keyword">window</span>.<span class="property">watsonAssistantChatOptions</span> = {
+    <span class="property">integrationID</span>: <span class="string">"abc123-integration-id"</span>,
+    <span class="property">region</span>: <span class="string">"eu-de"</span>,
+    <span class="property">serviceInstanceID</span>: <span class="string">"instance-uuid-here"</span>,
+
+    <span class="comment">// Key discovery parameters:</span>
+    <span class="property">hostURL</span>: <span class="string">"https://eu-de.assistant.watson.cloud.ibm.com"</span>,
+    <span class="property">agentId</span>: <span class="string">"agent-uuid-identifier"</span>,
+};
+                    </pre>
+                </div>
+
+                <div class="two-col" style="margin-top: 10px;">
+                    <div class="info-card">
+                        <div class="icon-header">
+                            <div class="icon-circle icon-red"><i class="fas fa-globe"></i></div>
+                            <h3 style="margin:0;">hostURL</h3>
+                        </div>
+                        <p>The <strong>base URL</strong> of the Watson X instance running on IBM Cloud. Determines the regional endpoint (e.g., <code>eu-de</code> for Frankfurt).</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="icon-header">
+                            <div class="icon-circle icon-blue"><i class="fas fa-robot"></i></div>
+                            <h3 style="margin:0;">agentId</h3>
+                        </div>
+                        <p>The <strong>unique identifier</strong> of the specific AI agent. This binds the widget to a particular agent's configuration, skills, and knowledge base.</p>
+                    </div>
+                </div>
+                <div class="fujitsu-footer">FUJITSU</div>
+            </section>
+
+            <!-- ======================== SLIDE 9: Endpoint Breakdown ======================== -->
+            <section class="slide-content">
+                <div class="slide-header-bar"></div>
+                <h2>Endpoint Structure Analysis</h2>
+
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Purpose</th>
+                            <th>Example Value</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>hostURL</strong></td>
+                            <td>IBM Cloud regional endpoint for Watson X</td>
+                            <td><code>https://eu-de.assistant.watson.cloud.ibm.com</code></td>
+                            <td><span class="status-badge success">Identified</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>agentId</strong></td>
+                            <td>Unique AI Agent identifier</td>
+                            <td><code>UUID format string</code></td>
+                            <td><span class="status-badge success">Identified</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>integrationID</strong></td>
+                            <td>Widget integration binding</td>
+                            <td><code>UUID format string</code></td>
+                            <td><span class="status-badge success">Identified</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>region</strong></td>
+                            <td>IBM Cloud region code</td>
+                            <td><code>eu-de</code> (Frankfurt)</td>
+                            <td><span class="status-badge success">Identified</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>serviceInstanceID</strong></td>
+                            <td>Watson service instance</td>
+                            <td><code>UUID format string</code></td>
+                            <td><span class="status-badge info">Under Review</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="content-box" style="margin-top: 10px;">
+                    <h3><i class="fas fa-check-circle" style="color: #00c853; margin-right: 8px;"></i>Key Outcome</h3>
+                    <p>
+                        The <strong>hostURL</strong> and <strong>agentId</strong> were successfully extracted from the JavaScript configuration snippet,
+                        confirming the base URL and the specific agent identifier for the Watson X deployment.
+                    </p>
+                </div>
+                <div class="fujitsu-footer">FUJITSU</div>
+            </section>
+
+            <!-- ======================== SLIDE 10: SECTION - Agent Config ======================== -->
+            <section class="slide-section-divider">
+                <div class="red-accent-bar"></div>
+                <div class="geo-decoration"></div>
+                <div style="padding-left: 40px;">
+                    <h2>Agent Configuration</h2>
+                    <div class="section-subtitle">Integration Model</div>
+                </div>
+                <div class="fujitsu-footer">FUJITSU CONFIDENTIAL</div>
+            </section>
+
+            <!-- ======================== SLIDE 11: Agent Integration Model ======================== -->
+            <section class="slide-content">
+                <div class="slide-header-bar"></div>
+                <h2>Watson X Agent Integration</h2>
+
+                <div class="two-col-wide-left">
+                    <div>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <h4>1. Widget Initialization</h4>
+                                <p>The JavaScript snippet loads and initializes the Watson X chat widget with the configured parameters.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>2. Endpoint Resolution</h4>
+                                <p>The <strong>hostURL</strong> resolves to the correct IBM Cloud regional data center (e.g., Frankfurt for <code>eu-de</code>).</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>3. Agent Binding</h4>
+                                <p>The <strong>agentId</strong> binds the widget session to the specific AI agent with its skills, actions, and knowledge base.</p>
+                            </div>
+                            <div class="timeline-item">
+                                <h4>4. Session Management</h4>
+                                <p>Watson X manages the conversation session, maintaining context and state across interactions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="info-card" style="margin-bottom: 15px;">
+                            <div class="icon-header">
+                                <div class="icon-circle icon-teal"><i class="fas fa-shield-halved"></i></div>
+                                <h3 style="margin:0;">Security Model</h3>
+                            </div>
+                            <ul>
+                                <li>HTTPS encrypted communication</li>
+                                <li>Regional data residency (EU compliance)</li>
+                                <li>Service instance isolation</li>
+                                <li>Integration-level access control</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <div class="icon-header">
+                                <div class="icon-circle icon-red"><i class="fas fa-puzzle-piece"></i></div>
+                                <h3 style="margin:0;">Capabilities</h3>
+                            </div>
+                            <ul>
+                                <li>Conversational AI agent</li>
+                                <li>Custom skill integration</li>
+                                <li>Knowledge base querying</li>
+                                <li>Multi-turn dialogue management</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="fujitsu-footer">FUJITSU</div>
+            </section>
+
+            <!-- ======================== SLIDE 12: SECTION - Key Findings ======================== -->
+            <section class="slide-section-divider">
+                <div class="red-accent-bar"></div>
+                <div class="geo-decoration"></div>
+                <div style="padding-left: 40px;">
+                    <h2>Key Findings & Next Steps</h2>
+                    <div class="section-subtitle">Discovery Outcomes</div>
+                </div>
+                <div class="fujitsu-footer">FUJITSU CONFIDENTIAL</div>
+            </section>
+
+            <!-- ======================== SLIDE 13: Key Findings ======================== -->
+            <section class="slide-content">
+                <div class="slide-header-bar"></div>
+                <h2>Key Findings</h2>
+
+                <div class="finding-item">
+                    <div class="finding-number">1</div>
+                    <div class="finding-text">
+                        <strong>Endpoint Successfully Identified:</strong> The Watson X AI agent operates via a regional IBM Cloud endpoint.
+                        The <strong>hostURL</strong> determines the data center, while the <strong>agentId</strong> specifies the exact agent configuration.
+                    </div>
+                </div>
+
+                <div class="finding-item">
+                    <div class="finding-number">2</div>
+                    <div class="finding-text">
+                        <strong>JavaScript Widget Architecture:</strong> Watson X uses a client-side JavaScript widget pattern for embedding.
+                        Configuration is passed via the <strong>watsonAssistantChatOptions</strong> global object, making it straightforward to analyze and integrate.
+                    </div>
+                </div>
+
+                <div class="finding-item">
+                    <div class="finding-number">3</div>
+                    <div class="finding-text">
+                        <strong>EU Data Residency:</strong> The <code>eu-de</code> region code confirms the data is hosted in 
+                        <strong>Frankfurt, Germany</strong>, aligning with European data protection requirements (GDPR compliance).
+                    </div>
+                </div>
+
+                <div class="finding-item">
+                    <div class="finding-number">4</div>
+                    <div class="finding-text">
+                        <strong>Integration Flexibility:</strong> The agent can be embedded in any web application through the JS snippet,
+                        providing a <strong>low-friction integration path</strong> for existing enterprise web platforms.
+                    </div>
+                </div>
+                <div class="fujitsu-footer">FUJITSU</div>
+            </section>
+
+            <!-- ======================== SLIDE 14: Next Steps ======================== -->
+            <section class="slide-content">
+                <div class="slide-header-bar"></div>
+                <h2>Next Steps</h2>
+
+                <div class="two-col">
+                    <div>
+                        <div class="info-card" style="margin-bottom: 15px; border-left: 4px solid var(--fujitsu-red);">
+                            <div class="icon-header">
+                                <div class="icon-circle icon-red"><i class="fas fa-flask"></i></div>
+                                <h3 style="margin:0;">Exploration Phase</h3>
+                            </div>
+                            <ul>
+                                <li>Deep-dive into Watson X API documentation</li>
+                                <li>Test agent skill customisation</li>
+                                <li>Evaluate knowledge base capabilities</li>
+                                <li>Assess multi-agent orchestration</li>
+                            </ul>
+                        </div>
+                        <div class="info-card" style="border-left: 4px solid var(--fujitsu-accent-blue);">
+                            <div class="icon-header">
+                                <div class="icon-circle icon-blue"><i class="fas fa-code"></i></div>
+                                <h3 style="margin:0;">Technical Validation</h3>
+                            </div>
+                            <ul>
+                                <li>Build a proof-of-concept integration</li>
+                                <li>Test API rate limits and latency</li>
+                                <li>Validate authentication flows</li>
+                                <li>Benchmark response quality</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="info-card" style="margin-bottom: 15px; border-left: 4px solid var(--fujitsu-teal);">
+                            <div class="icon-header">
+                                <div class="icon-circle icon-teal"><i class="fas fa-scale-balanced"></i></div>
+                                <h3 style="margin:0;">Evaluation Criteria</h3>
+                            </div>
+                            <ul>
+                                <li>Ease of integration vs. other platforms</li>
+                                <li>Agent capability and flexibility</li>
+                                <li>Enterprise readiness (SSO, RBAC)</li>
+                                <li>Cost model and scalability</li>
+                            </ul>
+                        </div>
+
+                        <h3 style="font-size: 0.8em; margin-top: 20px; margin-bottom: 8px;">Discovery Progress</h3>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.6em; color: var(--fujitsu-gray);">
+                            <span>Endpoint Discovery</span><span class="text-red">100%</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-fill" style="width: 100%;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.6em; color: var(--fujitsu-gray);">
+                            <span>Agent Configuration</span><span class="text-red">75%</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-fill" style="width: 75%;"></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.6em; color: var(--fujitsu-gray);">
+                            <span>Integration Testing</span><span class="text-red">25%</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-fill" style="width: 25%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fujitsu-footer">FUJITSU</div>
+            </section>
+
+            <!-- ======================== SLIDE 15: CLOSE ======================== -->
+            <section class="slide-close">
+                <div style="text-align: center;">
+                    <div class="fujitsu-logo" style="font-size: 1.2em; margin-bottom: 1.5em;">FUJITSU</div>
+                    <h2>Thank You</h2>
+                    <div class="close-line"></div>
+                    <p style="margin-top: 1em;">Watson X Discovery – Fujitsu's Support</p>
+                    <p style="font-size: 0.65em; margin-top: 2em; color: rgba(255,255,255,0.3);">
+                        © 2026 Fujitsu. All rights reserved.
+                    </p>
+                </div>
+                <div class="fujitsu-footer">FUJITSU CONFIDENTIAL</div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Reveal.js -->
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            slideNumber: 'c/t',
+            width: 1280,
+            height: 720,
+            margin: 0.06,
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            center: true,
+            controls: true,
+            progress: true,
+            history: true,
+            keyboard: true,
+            touch: true,
+            loop: false,
+            mouseWheel: false,
+            hideInactiveCursor: true,
+            hideCursorTime: 3000,
+        });
+    </script>
+</body>
+</html>

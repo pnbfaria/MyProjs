@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import Header from '@/components/layout/Header';
-import { Search, Filter, Users, ExternalLink } from 'lucide-react';
+import { Search, Users, ExternalLink, Radio, Zap, Clock, Layers } from 'lucide-react';
 
 interface TicketWithSla {
   id: string;
@@ -36,6 +36,7 @@ export default function TicketsPage() {
   const [clientFilter, setClientFilter] = useState('all');
   const [gravityFilter, setGravityFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [dateRange, setDateRange] = useState('all');
   const [clients, setClients] = useState<string[]>([]);
 
   const fetchTickets = useCallback(async () => {
@@ -56,7 +57,6 @@ export default function TicketsPage() {
         setTickets(data.data || []);
         setTotal(data.total || 0);
 
-        // Extract unique clients
         const uniqueClients = [...new Set(data.data?.map((t: TicketWithSla) => t.client).filter(Boolean))] as string[];
         if (uniqueClients.length > 0) setClients(uniqueClients);
       }
@@ -79,6 +79,17 @@ export default function TicketsPage() {
     });
   };
 
+  // Filter tickets by date range on client side
+  const filteredTickets = tickets.filter(t => {
+    if (dateRange === 'all') return true;
+    const reqDate = new Date(t.requestedDate);
+    const now = new Date();
+    if (dateRange === '7d') return (now.getTime() - reqDate.getTime()) < 7 * 24 * 60 * 60 * 1000;
+    if (dateRange === '30d') return (now.getTime() - reqDate.getTime()) < 30 * 24 * 60 * 60 * 1000;
+    if (dateRange === '90d') return (now.getTime() - reqDate.getTime()) < 90 * 24 * 60 * 60 * 1000;
+    return true;
+  });
+
   return (
     <>
       <Header title="Tickets" />
@@ -86,60 +97,187 @@ export default function TicketsPage() {
         <div className="page-header">
           <h2 className="page-title">Incident Tickets</h2>
           <p className="page-description">
-            {total} tickets from eSignature space — filtered by Incident type
+            {total} signals intercepted from eSignature space — filtered by Incident type
           </p>
         </div>
 
-        {/* Filters */}
-        <div className="filters-bar">
-          <div style={{ position: 'relative', flex: '1', maxWidth: '320px' }}>
-            <Search size={16} style={{
-              position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)',
-              color: 'var(--color-text-muted)',
-            }} />
-            <input
-              type="text"
-              className="input"
-              placeholder="Search tickets..."
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              style={{ paddingLeft: '36px' }}
-            />
+        {/* ── CONTROL DECK ── */}
+        <div className="control-deck">
+          <div className="control-deck-row">
+            {/* Search — Spanning */}
+            <div className="control-deck-group control-deck-search">
+              <label className="control-deck-label">
+                <Radio size={10} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                Signal Search
+              </label>
+              <div style={{ position: 'relative' }}>
+                <Search size={14} className="control-deck-search-icon" />
+                <input
+                  type="text"
+                  className="input"
+                  placeholder="Scan transmissions..."
+                  value={search}
+                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                  style={{ paddingLeft: '36px' }}
+                />
+              </div>
+            </div>
+
+            {/* Signal Strength (Priority/Gravity) */}
+            <div className="control-deck-group">
+              <label className="control-deck-label">
+                <Zap size={10} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                Signal Strength
+              </label>
+              <div className="synth-toggle-group">
+                <label className="synth-toggle">
+                  <input
+                    type="radio"
+                    name="gravity"
+                    checked={gravityFilter === 'all'}
+                    onChange={() => { setGravityFilter('all'); setPage(1); }}
+                  />
+                  <span className="synth-toggle-label">
+                    <span className="synth-toggle-led" />
+                    All
+                  </span>
+                </label>
+                <label className="synth-toggle synth-toggle--danger">
+                  <input
+                    type="radio"
+                    name="gravity"
+                    checked={gravityFilter === 'Majeur'}
+                    onChange={() => { setGravityFilter('Majeur'); setPage(1); }}
+                  />
+                  <span className="synth-toggle-label">
+                    <span className="synth-toggle-led" />
+                    Majeur
+                  </span>
+                </label>
+                <label className="synth-toggle synth-toggle--warning">
+                  <input
+                    type="radio"
+                    name="gravity"
+                    checked={gravityFilter === 'Significatif'}
+                    onChange={() => { setGravityFilter('Significatif'); setPage(1); }}
+                  />
+                  <span className="synth-toggle-label">
+                    <span className="synth-toggle-led" />
+                    Significatif
+                  </span>
+                </label>
+                <label className="synth-toggle">
+                  <input
+                    type="radio"
+                    name="gravity"
+                    checked={gravityFilter === 'Mineur'}
+                    onChange={() => { setGravityFilter('Mineur'); setPage(1); }}
+                  />
+                  <span className="synth-toggle-label">
+                    <span className="synth-toggle-led" />
+                    Mineur
+                  </span>
+                </label>
+              </div>
+            </div>
           </div>
 
-          <select
-            className="select"
-            value={clientFilter}
-            onChange={(e) => { setClientFilter(e.target.value); setPage(1); }}
-          >
-            <option value="all">All Clients</option>
-            {clients.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
+          <div className="control-deck-row" style={{ marginTop: 'var(--space-md)' }}>
+            {/* Time-Stamp Flux (Date Range) */}
+            <div className="control-deck-group">
+              <label className="control-deck-label">
+                <Clock size={10} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                Time-Stamp Flux
+              </label>
+              <div className="synth-toggle-group">
+                {[
+                  { value: 'all', label: 'All Time' },
+                  { value: '7d', label: '7 Days' },
+                  { value: '30d', label: '30 Days' },
+                  { value: '90d', label: '90 Days' },
+                ].map(opt => (
+                  <label key={opt.value} className="synth-toggle">
+                    <input
+                      type="radio"
+                      name="dateRange"
+                      checked={dateRange === opt.value}
+                      onChange={() => setDateRange(opt.value)}
+                    />
+                    <span className="synth-toggle-label">
+                      <span className="synth-toggle-led" />
+                      {opt.label}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
 
-          <select
-            className="select"
-            value={gravityFilter}
-            onChange={(e) => { setGravityFilter(e.target.value); setPage(1); }}
-          >
-            <option value="all">All Gravities</option>
-            <option value="Majeur">Majeur</option>
-            <option value="Significatif">Significatif</option>
-            <option value="Mineur">Mineur</option>
-          </select>
+            {/* Origin Point (Client/Category) */}
+            <div className="control-deck-group">
+              <label className="control-deck-label">
+                <Layers size={10} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                Origin Point
+              </label>
+              <div className="synth-toggle-group">
+                <label className="synth-toggle">
+                  <input
+                    type="radio"
+                    name="client"
+                    checked={clientFilter === 'all'}
+                    onChange={() => { setClientFilter('all'); setPage(1); }}
+                  />
+                  <span className="synth-toggle-label">
+                    <span className="synth-toggle-led" />
+                    All Origins
+                  </span>
+                </label>
+                {clients.map(c => (
+                  <label key={c} className="synth-toggle">
+                    <input
+                      type="radio"
+                      name="client"
+                      checked={clientFilter === c}
+                      onChange={() => { setClientFilter(c); setPage(1); }}
+                    />
+                    <span className="synth-toggle-label">
+                      <span className="synth-toggle-led" />
+                      {c}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
 
-          <select
-            className="select"
-            value={statusFilter}
-            onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-          >
-            <option value="all">All Statuses</option>
-            <option value="Open">Open</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Resolved">Resolved</option>
-            <option value="Closed">Closed</option>
-          </select>
+            {/* Status */}
+            <div className="control-deck-group">
+              <label className="control-deck-label">
+                <Radio size={10} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                Transmission Status
+              </label>
+              <div className="synth-toggle-group">
+                {[
+                  { value: 'all', label: 'All' },
+                  { value: 'Open', label: 'Open' },
+                  { value: 'In Progress', label: 'Active' },
+                  { value: 'Resolved', label: 'Resolved' },
+                  { value: 'Closed', label: 'Closed' },
+                ].map(opt => (
+                  <label key={opt.value} className="synth-toggle">
+                    <input
+                      type="radio"
+                      name="status"
+                      checked={statusFilter === opt.value}
+                      onChange={() => { setStatusFilter(opt.value); setPage(1); }}
+                    />
+                    <span className="synth-toggle-label">
+                      <span className="synth-toggle-led" />
+                      {opt.label}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Tickets Table */}
@@ -162,17 +300,24 @@ export default function TicketsPage() {
               {loading ? (
                 <tr>
                   <td colSpan={9} style={{ textAlign: 'center', padding: 'var(--space-xl)', color: 'var(--color-text-tertiary)' }}>
-                    Loading tickets...
+                    <span style={{ 
+                      fontFamily: 'var(--font-display)',
+                      letterSpacing: '0.1em',
+                      textShadow: '0 0 10px var(--neon-cyan-glow)',
+                      color: 'var(--neon-cyan)',
+                    }}>
+                      Scanning frequencies...
+                    </span>
                   </td>
                 </tr>
-              ) : tickets.length === 0 ? (
+              ) : filteredTickets.length === 0 ? (
                 <tr>
                   <td colSpan={9} style={{ textAlign: 'center', padding: 'var(--space-xl)', color: 'var(--color-text-tertiary)' }}>
-                    No tickets found. Try adjusting your filters or sync with Jira.
+                    No signals detected. Adjust control deck parameters or initiate Jira sync.
                   </td>
                 </tr>
               ) : (
-                tickets.map((ticket) => (
+                filteredTickets.map((ticket) => (
                   <tr key={ticket.id}>
                     <td>
                       <a 
