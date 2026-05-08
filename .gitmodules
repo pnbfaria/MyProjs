@@ -1,0 +1,3 @@
+[submodule "fujitsu-ai-chat"]
+	path = fujitsu-ai-chat
+	url = https://github.com/pnbfaria/fujitsu-ai-chat.git
