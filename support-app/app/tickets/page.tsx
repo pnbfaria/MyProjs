@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Header from '@/components/layout/Header';
-import { Search, Users, ExternalLink, X, SlidersHorizontal, RotateCcw } from 'lucide-react';
+import { Search, Users, ExternalLink, Radio, Zap, Clock, Layers } from 'lucide-react';
 
 interface TicketWithSla {
   id: string;
@@ -27,13 +27,6 @@ interface TicketWithSla {
   };
 }
 
-interface ActiveFilter {
-  key: string;
-  label: string;
-  value: string;
-  displayValue: string;
-}
-
 export default function TicketsPage() {
   const [tickets, setTickets] = useState<TicketWithSla[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,9 +36,8 @@ export default function TicketsPage() {
   const [clientFilter, setClientFilter] = useState('all');
   const [gravityFilter, setGravityFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [slaFilter, setSlaFilter] = useState('all');
+  const [dateRange, setDateRange] = useState('all');
   const [clients, setClients] = useState<string[]>([]);
-  const [allClients, setAllClients] = useState<string[]>([]);
 
   const fetchTickets = useCallback(async () => {
     setLoading(true);
@@ -58,7 +50,6 @@ export default function TicketsPage() {
       if (clientFilter !== 'all') params.set('client', clientFilter);
       if (gravityFilter !== 'all') params.set('gravity', gravityFilter);
       if (statusFilter !== 'all') params.set('status', statusFilter);
-      if (slaFilter !== 'all') params.set('sla', slaFilter);
 
       const res = await fetch(`/api/jira/tickets?${params}`);
       if (res.ok) {
@@ -66,62 +57,19 @@ export default function TicketsPage() {
         setTickets(data.data || []);
         setTotal(data.total || 0);
 
-        // Extract unique clients from results
         const uniqueClients = [...new Set(data.data?.map((t: TicketWithSla) => t.client).filter(Boolean))] as string[];
         if (uniqueClients.length > 0) setClients(uniqueClients);
-
-        // Keep a master list of clients (only update when no client filter active)
-        if (clientFilter === 'all' && uniqueClients.length > 0) {
-          setAllClients((prev) => {
-            const merged = [...new Set([...prev, ...uniqueClients])].sort();
-            return merged;
-          });
-        }
       }
     } catch {
       /* Handle error */
     } finally {
       setLoading(false);
     }
-  }, [page, search, clientFilter, gravityFilter, statusFilter, slaFilter]);
+  }, [page, search, clientFilter, gravityFilter, statusFilter]);
 
   useEffect(() => {
     fetchTickets();
   }, [fetchTickets]);
-
-  // Compute active filters list
-  const activeFilters = useMemo<ActiveFilter[]>(() => {
-    const filters: ActiveFilter[] = [];
-    if (clientFilter !== 'all') filters.push({ key: 'client', label: 'Client', value: clientFilter, displayValue: clientFilter });
-    if (gravityFilter !== 'all') filters.push({ key: 'gravity', label: 'Gravity', value: gravityFilter, displayValue: gravityFilter });
-    if (statusFilter !== 'all') filters.push({ key: 'status', label: 'Status', value: statusFilter, displayValue: statusFilter });
-    if (slaFilter !== 'all') {
-      const slaLabels: Record<string, string> = { 'on-track': 'On Track', 'at-risk': 'At Risk', 'breached': 'Breached' };
-      filters.push({ key: 'sla', label: 'SLA', value: slaFilter, displayValue: slaLabels[slaFilter] || slaFilter });
-    }
-    if (search.trim()) filters.push({ key: 'search', label: 'Search', value: search, displayValue: `"${search}"` });
-    return filters;
-  }, [clientFilter, gravityFilter, statusFilter, slaFilter, search]);
-
-  const removeFilter = (key: string) => {
-    switch (key) {
-      case 'client': setClientFilter('all'); break;
-      case 'gravity': setGravityFilter('all'); break;
-      case 'status': setStatusFilter('all'); break;
-      case 'sla': setSlaFilter('all'); break;
-      case 'search': setSearch(''); break;
-    }
-    setPage(1);
-  };
-
-  const clearAllFilters = () => {
-    setSearch('');
-    setClientFilter('all');
-    setGravityFilter('all');
-    setStatusFilter('all');
-    setSlaFilter('all');
-    setPage(1);
-  };
 
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return '—';
@@ -131,20 +79,16 @@ export default function TicketsPage() {
     });
   };
 
-  // Apply client-side SLA filtering
-  const displayTickets = useMemo(() => {
-    if (slaFilter === 'all') return tickets;
-    return tickets.filter((t) => {
-      const ackStatus = t.sla?.acknowledge;
-      const resStatus = t.sla?.response;
-      if (slaFilter === 'breached') return ackStatus === 'breached' || resStatus === 'breached';
-      if (slaFilter === 'at-risk') return ackStatus === 'at-risk' || resStatus === 'at-risk';
-      if (slaFilter === 'on-track') return ackStatus === 'on-track' && resStatus === 'on-track';
-      return true;
-    });
-  }, [tickets, slaFilter]);
-
-  const clientOptions = allClients.length > 0 ? allClients : clients;
+  // Filter tickets by date range on client side
+  const filteredTickets = tickets.filter(t => {
+    if (dateRange === 'all') return true;
+    const reqDate = new Date(t.requestedDate);
+    const now = new Date();
+    if (dateRange === '7d') return (now.getTime() - reqDate.getTime()) < 7 * 24 * 60 * 60 * 1000;
+    if (dateRange === '30d') return (now.getTime() - reqDate.getTime()) < 30 * 24 * 60 * 60 * 1000;
+    if (dateRange === '90d') return (now.getTime() - reqDate.getTime()) < 90 * 24 * 60 * 60 * 1000;
+    return true;
+  });
 
   return (
     <>
@@ -153,122 +97,187 @@ export default function TicketsPage() {
         <div className="page-header">
           <h2 className="page-title">Incident Tickets</h2>
           <p className="page-description">
-            {total} tickets from eSignature space — filtered by Incident type
+            {total} signals intercepted from eSignature space — filtered by Incident type
           </p>
         </div>
 
-        {/* Filters */}
-        <div className="filters-bar">
-          {/* Row 1: Search + Dropdowns */}
-          <div className="filters-row">
-            {/* Search */}
-            <div className="filter-search-wrapper">
-              <Search size={16} className="filter-search-icon" />
-              <input
-                type="text"
-                className="filter-search-input"
-                placeholder="Search by key, summary, or description..."
-                value={search}
-                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-              />
+        {/* ── CONTROL DECK ── */}
+        <div className="control-deck">
+          <div className="control-deck-row">
+            {/* Search — Spanning */}
+            <div className="control-deck-group control-deck-search">
+              <label className="control-deck-label">
+                <Radio size={10} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                Signal Search
+              </label>
+              <div style={{ position: 'relative' }}>
+                <Search size={14} className="control-deck-search-icon" />
+                <input
+                  type="text"
+                  className="input"
+                  placeholder="Scan transmissions..."
+                  value={search}
+                  onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                  style={{ paddingLeft: '36px' }}
+                />
+              </div>
             </div>
 
-            <div className="filter-divider" />
-
-            {/* Client Filter */}
-            <div className="filter-group">
-              <span className="filter-group-label">Client</span>
-              <select
-                className={`filter-select${clientFilter !== 'all' ? ' active' : ''}`}
-                value={clientFilter}
-                onChange={(e) => { setClientFilter(e.target.value); setPage(1); }}
-              >
-                <option value="all">All Clients</option>
-                {clientOptions.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Gravity Filter */}
-            <div className="filter-group">
-              <span className="filter-group-label">Gravity</span>
-              <select
-                className={`filter-select${gravityFilter !== 'all' ? ' active' : ''}`}
-                value={gravityFilter}
-                onChange={(e) => { setGravityFilter(e.target.value); setPage(1); }}
-              >
-                <option value="all">All Gravities</option>
-                <option value="Majeur">🔴 Majeur</option>
-                <option value="Significatif">🟡 Significatif</option>
-                <option value="Mineur">🔵 Mineur</option>
-              </select>
-            </div>
-
-            {/* Status Filter */}
-            <div className="filter-group">
-              <span className="filter-group-label">Status</span>
-              <select
-                className={`filter-select${statusFilter !== 'all' ? ' active' : ''}`}
-                value={statusFilter}
-                onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-              >
-                <option value="all">All Statuses</option>
-                <option value="Open">Open</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Resolved">Resolved</option>
-                <option value="Closed">Closed</option>
-              </select>
-            </div>
-
-            {/* SLA Filter */}
-            <div className="filter-group">
-              <span className="filter-group-label">SLA Status</span>
-              <select
-                className={`filter-select${slaFilter !== 'all' ? ' active' : ''}`}
-                value={slaFilter}
-                onChange={(e) => { setSlaFilter(e.target.value); setPage(1); }}
-              >
-                <option value="all">All SLA</option>
-                <option value="on-track">✅ On Track</option>
-                <option value="at-risk">⚠️ At Risk</option>
-                <option value="breached">🚨 Breached</option>
-              </select>
-            </div>
-
-            {/* Results count */}
-            <div className="filter-results-summary">
-              <SlidersHorizontal size={14} style={{ marginRight: '6px', opacity: 0.5 }} />
-              {loading ? 'Loading...' : `${total} result${total !== 1 ? 's' : ''}`}
-              {activeFilters.length > 0 && (
-                <span className="filter-count">{activeFilters.length}</span>
-              )}
+            {/* Signal Strength (Priority/Gravity) */}
+            <div className="control-deck-group">
+              <label className="control-deck-label">
+                <Zap size={10} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                Signal Strength
+              </label>
+              <div className="synth-toggle-group">
+                <label className="synth-toggle">
+                  <input
+                    type="radio"
+                    name="gravity"
+                    checked={gravityFilter === 'all'}
+                    onChange={() => { setGravityFilter('all'); setPage(1); }}
+                  />
+                  <span className="synth-toggle-label">
+                    <span className="synth-toggle-led" />
+                    All
+                  </span>
+                </label>
+                <label className="synth-toggle synth-toggle--danger">
+                  <input
+                    type="radio"
+                    name="gravity"
+                    checked={gravityFilter === 'Majeur'}
+                    onChange={() => { setGravityFilter('Majeur'); setPage(1); }}
+                  />
+                  <span className="synth-toggle-label">
+                    <span className="synth-toggle-led" />
+                    Majeur
+                  </span>
+                </label>
+                <label className="synth-toggle synth-toggle--warning">
+                  <input
+                    type="radio"
+                    name="gravity"
+                    checked={gravityFilter === 'Significatif'}
+                    onChange={() => { setGravityFilter('Significatif'); setPage(1); }}
+                  />
+                  <span className="synth-toggle-label">
+                    <span className="synth-toggle-led" />
+                    Significatif
+                  </span>
+                </label>
+                <label className="synth-toggle">
+                  <input
+                    type="radio"
+                    name="gravity"
+                    checked={gravityFilter === 'Mineur'}
+                    onChange={() => { setGravityFilter('Mineur'); setPage(1); }}
+                  />
+                  <span className="synth-toggle-label">
+                    <span className="synth-toggle-led" />
+                    Mineur
+                  </span>
+                </label>
+              </div>
             </div>
           </div>
 
-          {/* Row 2: Active Filter Pills */}
-          {activeFilters.length > 0 && (
-            <div className="active-filters">
-              <span className="active-filters-label">Active Filters</span>
-              {activeFilters.map((f) => (
-                <span key={f.key} className="filter-pill">
-                  <span className="filter-pill-category">{f.label}:</span>
-                  <span className="filter-pill-value">{f.displayValue}</span>
-                  <button
-                    className="filter-pill-dismiss"
-                    onClick={() => removeFilter(f.key)}
-                    title={`Remove ${f.label} filter`}
-                  >
-                    <X size={12} />
-                  </button>
-                </span>
-              ))}
-              <button className="filter-clear-all" onClick={clearAllFilters}>
-                <RotateCcw size={12} />
-                Clear all
-              </button>
+          <div className="control-deck-row" style={{ marginTop: 'var(--space-md)' }}>
+            {/* Time-Stamp Flux (Date Range) */}
+            <div className="control-deck-group">
+              <label className="control-deck-label">
+                <Clock size={10} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                Time-Stamp Flux
+              </label>
+              <div className="synth-toggle-group">
+                {[
+                  { value: 'all', label: 'All Time' },
+                  { value: '7d', label: '7 Days' },
+                  { value: '30d', label: '30 Days' },
+                  { value: '90d', label: '90 Days' },
+                ].map(opt => (
+                  <label key={opt.value} className="synth-toggle">
+                    <input
+                      type="radio"
+                      name="dateRange"
+                      checked={dateRange === opt.value}
+                      onChange={() => setDateRange(opt.value)}
+                    />
+                    <span className="synth-toggle-label">
+                      <span className="synth-toggle-led" />
+                      {opt.label}
+                    </span>
+                  </label>
+                ))}
+              </div>
             </div>
-          )}
+
+            {/* Origin Point (Client/Category) */}
+            <div className="control-deck-group">
+              <label className="control-deck-label">
+                <Layers size={10} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                Origin Point
+              </label>
+              <div className="synth-toggle-group">
+                <label className="synth-toggle">
+                  <input
+                    type="radio"
+                    name="client"
+                    checked={clientFilter === 'all'}
+                    onChange={() => { setClientFilter('all'); setPage(1); }}
+                  />
+                  <span className="synth-toggle-label">
+                    <span className="synth-toggle-led" />
+                    All Origins
+                  </span>
+                </label>
+                {clients.map(c => (
+                  <label key={c} className="synth-toggle">
+                    <input
+                      type="radio"
+                      name="client"
+                      checked={clientFilter === c}
+                      onChange={() => { setClientFilter(c); setPage(1); }}
+                    />
+                    <span className="synth-toggle-label">
+                      <span className="synth-toggle-led" />
+                      {c}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Status */}
+            <div className="control-deck-group">
+              <label className="control-deck-label">
+                <Radio size={10} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                Transmission Status
+              </label>
+              <div className="synth-toggle-group">
+                {[
+                  { value: 'all', label: 'All' },
+                  { value: 'Open', label: 'Open' },
+                  { value: 'In Progress', label: 'Active' },
+                  { value: 'Resolved', label: 'Resolved' },
+                  { value: 'Closed', label: 'Closed' },
+                ].map(opt => (
+                  <label key={opt.value} className="synth-toggle">
+                    <input
+                      type="radio"
+                      name="status"
+                      checked={statusFilter === opt.value}
+                      onChange={() => { setStatusFilter(opt.value); setPage(1); }}
+                    />
+                    <span className="synth-toggle-label">
+                      <span className="synth-toggle-led" />
+                      {opt.label}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Tickets Table */}
@@ -291,17 +300,24 @@ export default function TicketsPage() {
               {loading ? (
                 <tr>
                   <td colSpan={9} style={{ textAlign: 'center', padding: 'var(--space-xl)', color: 'var(--color-text-tertiary)' }}>
-                    Loading tickets...
+                    <span style={{ 
+                      fontFamily: 'var(--font-display)',
+                      letterSpacing: '0.1em',
+                      textShadow: '0 0 10px var(--neon-cyan-glow)',
+                      color: 'var(--neon-cyan)',
+                    }}>
+                      Scanning frequencies...
+                    </span>
                   </td>
                 </tr>
-              ) : displayTickets.length === 0 ? (
+              ) : filteredTickets.length === 0 ? (
                 <tr>
                   <td colSpan={9} style={{ textAlign: 'center', padding: 'var(--space-xl)', color: 'var(--color-text-tertiary)' }}>
-                    No tickets found. Try adjusting your filters or sync with Jira.
+                    No signals detected. Adjust control deck parameters or initiate Jira sync.
                   </td>
                 </tr>
               ) : (
-                displayTickets.map((ticket) => (
+                filteredTickets.map((ticket) => (
                   <tr key={ticket.id}>
                     <td>
                       <a 
@@ -426,4 +442,3 @@ export default function TicketsPage() {
     </>
   );
 }
-

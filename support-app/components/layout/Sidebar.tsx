@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Ticket, Bell, FileBarChart, Zap, Settings, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, Ticket, Bell, FileBarChart, Settings, BarChart3 } from 'lucide-react';
 
 const NAV_SECTIONS = [
   {
@@ -33,38 +33,51 @@ export default function Sidebar() {
 
   return (
     <aside className="sidebar">
-      {/* Logo */}
+      {/* Logo — 1984-Style Chrome Hello Kitty */}
       <div className="sidebar-logo" style={{ 
         flexDirection: 'column',
         alignItems: 'center',
         textAlign: 'center',
-        padding: 'var(--space-lg) var(--space-sm) var(--space-md)',
-        marginBottom: 'var(--space-lg)',
-        gap: '8px',
+        padding: 'var(--space-md) var(--space-sm)',
+        marginBottom: 'var(--space-xl)'
       }}>
         <div style={{ 
-          width: '100%', 
+          width: '72px', 
+          height: '72px', 
           display: 'flex', 
           justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: '10px',
         }}>
           <img 
-            src="/fujitsu-logo.png" 
-            alt="Fujitsu" 
+            src="/hello-kitty-chrome.png" 
+            alt="Anti-Gravity" 
+            className="neon-logo"
             style={{ 
-              width: '140px', 
-              height: 'auto', 
+              width: '68px', 
+              height: '68px', 
               objectFit: 'contain',
+              borderRadius: '8px',
             }} 
           />
         </div>
         <div style={{
+          fontFamily: 'var(--font-display)',
           fontSize: '11px',
-          fontWeight: 700,
-          color: 'rgba(255, 255, 255, 0.85)',
+          fontWeight: 800,
+          color: 'var(--neon-cyan)',
           letterSpacing: '0.18em',
           textTransform: 'uppercase',
+          paddingTop: '8px',
+          borderTop: '1px solid rgba(0, 240, 255, 0.15)',
+          width: '80%',
+          marginTop: '4px',
+          textShadow: '0 0 10px rgba(0, 240, 255, 0.4)',
         }}>
-          Support <span style={{ color: 'var(--color-accent)' }}>Hub</span>
+          Support <span style={{ 
+            color: 'var(--neon-magenta)',
+            textShadow: '0 0 10px rgba(255, 45, 120, 0.5)',
+          }}>Hub</span>
         </div>
       </div>
 
@@ -102,16 +115,37 @@ export default function Sidebar() {
           style={{
             padding: 'var(--space-md)',
             borderRadius: 'var(--radius-md)',
-            background: 'var(--color-bg-elevated)',
-            border: '1px solid var(--border-color)',
+            background: 'var(--glass-bg)',
+            border: '1px solid var(--glass-border)',
             fontSize: 'var(--font-size-xs)',
             color: 'var(--color-text-tertiary)',
+            backdropFilter: 'blur(10px)',
           }}
         >
-          <div style={{ fontWeight: 600, color: 'var(--color-text-secondary)', marginBottom: '4px' }}>
+          <div style={{ 
+            fontFamily: 'var(--font-display)',
+            fontWeight: 600, 
+            color: 'var(--neon-cyan)', 
+            marginBottom: '4px',
+            fontSize: '10px',
+            letterSpacing: '0.1em',
+            textShadow: '0 0 6px rgba(0, 240, 255, 0.3)',
+          }}>
             eSignature Space
           </div>
-          <div>Jira integration active</div>
+          <div style={{ color: 'var(--color-text-muted)' }}>
+            <span style={{ 
+              display: 'inline-block',
+              width: '5px',
+              height: '5px',
+              borderRadius: '50%',
+              background: 'var(--neon-green)',
+              boxShadow: '0 0 6px var(--neon-green)',
+              marginRight: '6px',
+              verticalAlign: 'middle',
+            }}/>
+            Jira integration active
+          </div>
         </div>
       </div>
     </aside>
